@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#F6F5F1" />
+  <meta name="description" content="IKIGAI Pilot — clarifier ce qui compte et avancer une action à la fois." />
+  <title>IKIGAI Pilot</title>
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./assets/app-icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="./styles.css?v=3.0.0" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <div id="toast-region" class="toast-region" aria-live="polite"></div>
+
+  <section id="auth-view" class="auth-shell">
+    <div class="auth-visual" aria-hidden="true">
+      <div class="auth-landscape"></div>
+      <div class="auth-copy">
+        <p class="overline">IKIGAI PILOT</p>
+        <h1>Range tes ambitions.<br />Avance une action à la fois.</h1>
+        <p>Tout n’a pas besoin d’être fait maintenant.</p>
+      </div>
+    </div>
+    <div class="auth-panel">
+      <div class="auth-card">
+        <div class="brand-lockup"><span class="brand-dot"></span><strong>IKIGAI Pilot</strong></div>
+        <h2>Bienvenue</h2>
+        <p class="secondary-text">Retrouve ton chemin sans garder tout dans ta tête.</p>
+        <form id="auth-form" class="soft-form">
+          <label>Adresse e-mail<input id="email" type="email" autocomplete="email" required /></label>
+          <label>Mot de passe<input id="password" type="password" autocomplete="current-password" minlength="6" required /></label>
+          <button type="submit" class="primary-control">Se connecter</button>
+          <button type="button" class="quiet-control" id="signup-btn">Créer mon espace</button>
+        </form>
+        <p id="auth-message" class="form-message"></p>
+        <p class="legal-copy"><a href="./legal/terms.html">Conditions</a><span>·</span><a href="./legal/privacy.html">Confidentialité</a></p>
+      </div>
+    </div>
+  </section>
+
+  <div id="app-view" class="app-shell hidden">
+    <header class="app-header">
+      <div class="header-left">
+        <div class="brand-lockup compact"><span class="brand-dot"></span><strong>IKIGAI</strong></div>
+        <div id="header-breadcrumb" class="header-breadcrumb" aria-label="Chemin actuel"></div>
+      </div>
+      <div class="header-right">
+        <span id="sync-state" class="sync-state">À jour</span>
+        <button id="profile-trigger" class="profile-trigger" aria-label="Ouvrir le menu du profil"><span id="profile-initial">I</span></button>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <section id="view-today" class="app-view" aria-labelledby="today-title">
+        <div class="today-layout">
+          <div class="today-hero">
+            <div class="today-hero-copy">
+              <p id="today-greeting" class="overline soft">BONJOUR</p>
+              <h1 id="today-title">Aujourd’hui,<br />avançons sur une seule chose.</h1>
+            </div>
+            <article id="main-focus-card" class="main-focus-card empty">
+              <div class="focus-card-head"><span class="soft-pill">Maintenant</span><span id="main-focus-duration" class="tiny-meta"></span></div>
+              <div>
+                <h2 id="main-focus-title">Tout est rangé.</h2>
+                <p id="main-focus-context">Choisis une prochaine action quand tu es prêt.</p>
+              </div>
+              <div id="main-focus-start" class="inline-action hidden" role="button" tabindex="0"><span class="play-disc">▶</span><span>Commencer</span></div>
+            </article>
+          </div>
+
+          <section class="today-list-section">
+            <div class="section-label-row"><h2>Plus tard aujourd’hui</h2><span id="today-total" class="tiny-meta"></span></div>
+            <div id="today-secondary-actions" class="calm-task-list"></div>
+            <p id="today-reassurance" class="reassurance">Tout le reste est rangé. Tu n’as pas besoin d’y penser maintenant.</p>
+          </section>
+
+          <section id="energy-checkin" class="energy-checkin hidden">
+            <p>Comment te sens-tu aujourd’hui ?</p>
+            <div class="choice-row">
+              <div class="choice-chip" data-energy="1" role="button" tabindex="0"><span>◔</span> Peu d’énergie</div>
+              <div class="choice-chip" data-energy="3" role="button" tabindex="0"><span>◑</span> Énergie normale</div>
+              <div class="choice-chip" data-energy="5" role="button" tabindex="0"><span>●</span> Bonne énergie</div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section id="view-path" class="app-view active-view" aria-labelledby="path-title">
+        <div class="path-shell">
+          <div class="path-intro">
+            <div>
+              <p id="path-overline" class="overline soft">MON CHEMIN</p>
+              <h1 id="path-title">Ce qui compte vraiment pour moi</h1>
+              <p id="path-subtitle" class="secondary-text">Entre dans un domaine. Le reste disparaîtra pour te laisser respirer.</p>
+            </div>
+            <div id="path-progress" class="progress-orbit hidden" aria-label="Progression"></div>
+          </div>
+
+          <section id="natural-intake" class="natural-intake" aria-labelledby="natural-intake-title">
+            <div class="natural-intake-copy">
+              <p class="overline soft">TU PEUX COMMENCER N’IMPORTE OÙ</p>
+              <h2 id="natural-intake-title">Qu’est-ce que tu veux rendre réel ?</h2>
+              <p>Écris avec tes mots. Même si c’est confus, l’aide va ranger, poser seulement les questions utiles et construire ton arbre.</p>
+            </div>
+            <form id="natural-intake-form" class="natural-composer">
+              <textarea id="natural-intake-input" rows="3" placeholder="Ex. Je veux évoluer professionnellement, terminer mon application et retrouver du temps pour moi…"></textarea>
+              <div class="natural-composer-foot">
+                <span id="natural-intake-speech" class="voice-link" data-speech-target="natural-intake-input" role="button" tabindex="0">◉ Parler</span>
+                <span id="ai-provider-state" class="provider-state">Vérification de l’aide…</span>
+                <button type="submit" class="composer-send" aria-label="Transformer ce texte en chemin">→</button>
+              </div>
+            </form>
+            <p class="natural-promise">Tu ne rempliras pas cinq niveaux. Tu valideras simplement le chemin proposé.</p>
+          </section>
+
+          <div id="focus-canvas" class="focus-canvas">
+            <svg id="tree-lines" class="tree-lines" aria-hidden="true"></svg>
+            <div id="focus-parent" class="focus-parent"></div>
+            <div id="focus-children" class="focus-children"></div>
+          </div>
+
+          <section id="project-detail" class="project-detail hidden">
+            <div class="project-summary-row">
+              <div>
+                <p class="overline soft">PROJET</p>
+                <h2 id="project-title"></h2>
+                <p id="project-description" class="secondary-text"></p>
+              </div>
+              <div id="project-progress-orbit" class="progress-orbit"></div>
+            </div>
+            <div id="milestone-path" class="milestone-path"></div>
+            <div class="project-columns">
+              <section>
+                <div class="section-label-row"><h3>À faire maintenant</h3><span id="project-open-count" class="tiny-meta"></span></div>
+                <div id="project-actions-now" class="calm-task-list"></div>
+                <div id="inline-action-entry" class="inline-entry" role="button" tabindex="0"><span>＋</span><span>Ajouter une action</span></div>
+              </section>
+              <aside id="project-quiet-detail" class="project-quiet-detail"></aside>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section id="view-ideas" class="app-view" aria-labelledby="ideas-title">
+        <div class="ideas-shell">
+          <p class="overline soft">MES IDÉES</p>
+          <h1 id="ideas-title">Sors-les de ta tête.</h1>
+          <p class="secondary-text ideas-intro">Une idée peut rester ici sans devenir un projet. Tu décideras plus tard.</p>
+          <form id="idea-quick-form" class="idea-capture">
+            <textarea id="idea-quick-input" rows="2" placeholder="Écris ce que tu ne veux plus garder dans ta tête…"></textarea>
+            <div class="capture-hint"><span id="idea-speech" class="voice-link" data-speech-target="idea-quick-input" role="button" tabindex="0">◉ Parler</span><span>Entrée pour ranger · Maj + Entrée pour une nouvelle ligne</span></div>
+          </form>
+          <div id="ideas-list" class="idea-stack"></div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-dock" aria-label="Navigation principale">
+      <button data-view="path" class="dock-item active"><span class="dock-icon">⌁</span><span>Mon chemin</span></button>
+      <button data-view="today" class="dock-item"><span class="dock-icon">○</span><span>Aujourd’hui</span><b id="today-count" class="dock-count hidden">0</b></button>
+      <button data-view="ideas" class="dock-item"><span class="dock-icon">◇</span><span>Mes idées</span></button>
+    </nav>
+  </div>
+
+  <dialog id="action-sheet" class="bottom-sheet">
+    <form method="dialog" id="action-sheet-form" class="sheet-content">
+      <div class="sheet-handle"></div>
+      <button value="cancel" class="sheet-close" aria-label="Fermer">×</button>
+      <div class="action-sheet-title-row"><span id="sheet-status-circle" class="task-circle large"></span><input id="sheet-action-title" class="sheet-title-input" /></div>
+      <div class="sheet-field-list">
+        <label><span>Projet</span><select id="sheet-project"></select></label>
+        <label><span>Quand</span><input id="sheet-planned-date" type="date" /></label>
+        <label><span>Échéance</span><input id="sheet-due-date" type="date" /></label>
+        <label><span>Durée</span><input id="sheet-duration" type="number" min="5" max="1440" /></label>
+        <label><span>Importance</span><select id="sheet-priority"><option value="low">Basse</option><option value="medium">Normale</option><option value="high">Haute</option><option value="critical">Critique</option></select></label>
+        <label class="notes-field"><span>Notes</span><textarea id="sheet-description" rows="4"></textarea></label>
+      </div>
+      <div id="sheet-ai-help" class="context-help hidden"></div>
+      <p class="autosave-note">Les modifications sont enregistrées automatiquement.</p>
+    </form>
+  </dialog>
+
+  <dialog id="profile-sheet" class="popover-sheet">
+    <form method="dialog" class="profile-menu">
+      <div><p class="overline soft">MON ESPACE</p><h2 id="profile-space-name">Mon espace</h2></div>
+      <label class="menu-field">Espace<select id="workspace-select"></select></label>
+      <div id="profile-menu-items" class="menu-list">
+        <div class="menu-row" data-profile-action="review" role="button" tabindex="0"><span>Faire mon bilan</span><span>›</span></div>
+        <div class="menu-row" data-profile-action="settings" role="button" tabindex="0"><span>Réglages de l’espace</span><span>›</span></div>
+        <div class="menu-row" data-profile-action="proposals" role="button" tabindex="0"><span>Propositions en attente</span><span id="proposal-count">0</span></div>
+        <div class="menu-row danger" data-profile-action="logout" role="button" tabindex="0"><span>Se déconnecter</span><span>›</span></div>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="simple-editor" class="center-dialog">
+    <form method="dialog" id="simple-editor-form" class="dialog-card">
+      <div class="dialog-head"><div><p id="editor-overline" class="overline soft"></p><h2 id="editor-title"></h2></div><button value="cancel" class="sheet-close">×</button></div>
+      <p id="editor-helper" class="secondary-text"></p>
+      <div id="editor-fields" class="soft-form"></div>
+      <div class="dialog-actions"><button value="cancel" class="quiet-control">Annuler</button><button id="editor-save" value="default" class="primary-control">Continuer</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="guide-dialog" class="guide-dialog">
+    <form method="dialog" id="guide-form" class="guide-card">
+      <button value="cancel" class="sheet-close guide-close" aria-label="Fermer">×</button>
+      <div id="guide-step" class="guide-step"></div>
+    </form>
+  </dialog>
+
+  <dialog id="proposal-dialog" class="proposal-dialog">
+    <form method="dialog" class="proposal-card">
+      <button value="cancel" class="sheet-close" aria-label="Fermer">×</button>
+      <p class="overline soft">PROPOSITION</p>
+      <h2>Voici le chemin que j’ai compris.</h2>
+      <p id="proposal-summary" class="secondary-text"></p>
+      <div id="proposal-preview" class="proposal-preview"></div>
+      <div id="proposal-warnings" class="proposal-warnings"></div>
+      <div class="proposal-choices">
+        <div class="decision-card positive" data-proposal-action="apply" role="button" tabindex="0"><span>Ça me correspond</span><small>Ajouter cette proposition à mon chemin</small></div>
+        <div class="decision-card" data-proposal-action="refine" role="button" tabindex="0"><span>Changer quelque chose</span><small>Préciser ce qui ne convient pas</small></div>
+        <div class="decision-card quiet" data-proposal-action="reject" role="button" tabindex="0"><span>Laisser de côté</span><small>La proposition reste rangée</small></div>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="settings-dialog" class="center-dialog">
+    <form method="dialog" id="settings-form" class="dialog-card">
+      <div class="dialog-head"><div><p class="overline soft">RÉGLAGES</p><h2>Mon espace</h2></div><button value="cancel" class="sheet-close">×</button></div>
+      <div class="soft-form">
+        <label>Nom de l’espace<input name="name" required /></label>
+        <label>Temps disponible par semaine<input name="weekly_capacity_minutes" type="number" min="60" max="10080" /></label>
+        <label>Nombre maximum de priorités par jour<input name="daily_focus_limit" type="number" min="1" max="3" /></label>
+        <label class="toggle-row"><span>Autoriser l’aide intelligente</span><input name="ai_enabled" type="checkbox" /></label>
+        <label>Moteur d’essai<select name="ai_provider_preference"><option value="groq">Groq — conseillé pour tester</option><option value="openai">OpenAI</option><option value="auto">Automatique — Groq puis OpenAI</option></select></label>
+        <div id="provider-availability" class="provider-availability"></div>
+      </div>
+      <p class="privacy-note">L’aide intelligente ne reçoit que la branche ouverte. Elle ne modifie rien sans ta validation.</p>
+      <div class="dialog-actions"><button value="cancel" class="quiet-control">Fermer</button><button value="default" class="primary-control">Enregistrer</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="review-dialog" class="center-dialog wide-dialog">
+    <form method="dialog" class="dialog-card">
+      <div class="dialog-head"><div><p class="overline soft">MON BILAN</p><h2>Cette semaine</h2></div><button value="cancel" class="sheet-close">×</button></div>
+      <div id="review-content" class="review-content"></div>
+    </form>
+  </dialog>
+
+  <script src="./config.js?v=3.0.0"></script>
+  <script type="module" src="./app.js?v=3.0.0"></script>
+</body>
+</html>
