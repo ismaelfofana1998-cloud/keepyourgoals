@@ -1,29 +1,40 @@
 # CANON — KeepYourGoals : boussole personnelle
-Version 1.0 — 2026-11-03
+Version 1.1 — 2026-11-03
 Statut : **référence fonctionnelle canonique** pour les échanges ChatGPT, les données Supabase et les évolutions de l’application.
 
 > Finalité : protéger l’attention, conserver les possibilités et transformer quelques ambitions choisies en résultats observables. **Ne jamais confondre sophistication de l’outil et progrès réel.**
 
-## 1. Architecture des responsabilités
+## 1. Architecture et indépendance du produit
 
-- **ChatGPT = interface naturelle et copilote de réflexion.** L’utilisateur exprime une intention dans le langage courant ; l’assistant aide à clarifier, classer, jalonner, arbitrer et propose une action à la fois. Lorsque le connecteur Supabase est disponible, les lectures et écritures ont lieu directement dans Supabase, sans API de modèle.
-- **Supabase = source de vérité opérationnelle.** Les objectifs, jalons, actions, idées, statuts, dates et indicateurs sont persistés dans le projet `mzxgpdwjklvoqsjclrtz` (« Keep Yours Goals »). Ne pas considérer le contexte d’un chat comme une preuve de persistance.
-- **GitHub = code et règles durables.** Dépôt `ismaelfofana1998-cloud/keepyourgoals`. Ce document est la spécification canonique. Ne modifier l’application que pour un besoin utilisateur confirmé et testé.
-- **Application = seconde interface, pas un système concurrent.** À terme, elle lit et écrit les mêmes objets que le chat. Aucune autre base de vérité, aucune duplication des objectifs.
-- **Aucune API OpenAI/Groq ni agent autonome à construire maintenant.** Préparer un futur adaptateur de planification qui propose des changements structurés, soumis aux mêmes validations métier et à la validation humaine ; l’API pourra être branchée ultérieurement sans refondre le modèle.
+**Produit final visé : une application autonome et universelle.** Le chat ChatGPT est une **passerelle de conception et de pilotage personnel temporaire**, choisie pour éviter aujourd'hui des dépenses API. Il n'est **ni le moteur obligatoire**, ni l'interface définitive, ni le détenteur exclusif des règles métier.
 
-## 2. Les trois volets de vie
+- **Application autonome (produit principal à terme).** Une personne peut créer ses propres volets et sous-volets, objectifs SMART, jalons, actions et idées, les modifier, les archiver et les suivre sans chat, sans changement de code, sans nouvel écran codé à chaque création. L'utilisateur n'a pas besoin d'un développeur pour enregistrer un nouveau domaine ou objectif.
+- **ChatGPT (interface provisoire de l'utilisateur actuel).** Aide à clarifier, prioriser et jalonner depuis le chat ; écrit et lit la même base par connecteur Supabase. Ce mode n'est **pas obligatoire** pour les autres utilisateurs et ne doit jamais être une dépendance de l'application.
+- **Supabase (source de vérité et règles partagées).** Les catégories et objets structurés sont dans des tables métier. Projet : `mzxgpdwjklvoqsjclrtz`. Pas de stockage métier faisant autorité uniquement dans une conversation.
+- **GitHub (code, migrations et règles).** Dépôt `ismaelfofana1998-cloud/keepyourgoals` ; ce mémo vaut spécification produit transversale.
+- **IA embarquée (capacité future, optionnelle).** À terme, un fournisseur de modèle configurable pourrait transformer du langage naturel en propositions SMART, catégories, jalons et tâches. L'assistant intégré utilise **exactement les mêmes modèles de données, contrôles et validations** que le mode manuel. Aucune implémentation d'API de modèle ni frais API maintenant.
 
-1. **Personnel** (`personal`) : santé, sport, relations, équilibre, argent personnel et **apprentissage** (`subarea=learning`, dont DSCG). L’apprentissage n’est pas un quatrième volet.
-2. **Business** (`business`) : activités entrepreneuriales et leur rentabilité (ex. Doctracker, livraison, pressing).
-3. **Professionnel** (`professional`) : carrière, emploi, candidatures, évolution dans le salariat et compétences propres à cette trajectoire.
+**Trois capacités distinctes :** (1) gestion manuelle complète sans IA, (2) assistance ChatGPT temporaire avec connecteur pendant la conception, (3) assistance IA native future si les coûts et la valeur le justifient. L'application fonctionne même lorsque (2) et (3) sont indisponibles.
 
-Chaque objectif appartient à **un seul volet**, avec éventuellement une sous-catégorie libre. Ne pas créer de volets supplémentaires sans besoin réel. Une idée ne devient jamais un objectif actif par simple enregistrement.
+## 2. Volets et sous-volets entièrement personnalisables
+
+Aucun volet n'est figé dans le code, les règles SQL ou les formulaires. **Chaque utilisateur peut** créer, renommer, ordonner, archiver et réorganiser ses volets et sous-volets. Les volets dépendent de l'espace utilisateur (`workspace_id`) : **« Personnel / Business / Professionnel » est uniquement la classification initiale choisie par l'utilisateur actuel.** Un autre utilisateur peut choisir un seul volet « Vie », cinq volets différents, ou aucun au démarrage.
+
+**Exemple de paramétrage actuel, non universel :**
+- **Personnel** : santé, sport, équilibre, finances personnelles ; **Apprentissage** en sous-volet pour DSCG ou d'autres formations.
+- **Business** : création d'entreprise, Doctracker et autres activités (Doctracker peut être un sous-volet).
+- **Professionnel** : carrière salariée, compétences professionnelles, candidatures.
+
+**Schéma** : `kyg_areas(id,workspace_id,parent_id,name,position,status)`. La catégorisation d'un objectif se fait par `kyg_goals.area_id` (clé étrangère vers une catégorie du **même workspace**) ; une idée peut être sans catégorie ou référencer `kyg_ideas.area_id`. On ne code **jamais** de contrainte de type `area IN ('personal','business','professional')`. Les libellés appartiennent à l'utilisateur, et les filtres/menu/arbre de l'application sont construits à partir des données.
+
+**Objectifs entièrement personnalisables également :** titre, résultat SMART, mesure, valeur initiale/cible, unité, date de départ/cible, priorité, statut et notes éditables ; aucun objectif-type obligatoire. Un utilisateur peut créer des objectifs à des horizons différents et définir librement le contenu et les critères de ses jalons. Les horizons 1/3/6/12 mois restent un **modèle proposé**, jamais quatre champs forcés ou des échéances rigides.
+
+Une idée reste indépendante de l'arbre et ne devient jamais un objectif actif sans décision explicite.
 
 ## 3. Hiérarchie unique et minimale
 
 ```text
-Volet de vie
+Volet utilisateur (libre) → sous-volet facultatif
   └── Grand objectif stratégique SMART (cap à 12 mois ou autre horizon explicite)
        ├── Jalon à 1 mois
        ├── Jalon à 3 mois
@@ -48,7 +59,7 @@ Avant activation, rechercher avec la personne :
 
 Un élément manquant = **objectif au statut brouillon (`draft`)**, et non obligation d’inventer un chiffre. Poser **une seule question utile à la fois**. Présenter un plan proposé puis demander validation avant de l’activer.
 
-Les jalons à **1 / 3 / 6 / 12 mois** se calculent à partir de la **date de départ explicite de l’objectif**, pas de la date courante à chaque affichage. Adapter ce cycle si l’utilisateur choisit une autre durée. Chaque jalon contient : livrable ou résultat attendu, critère d’acceptation vérifiable, échéance, statut. Ne pas prendre une activité (« faire de la prospection ») pour un résultat (« nombre de pilotes réellement actifs »).
+Les jalons proposés à **1 / 3 / 6 / 12 mois** (ou une autre série décidée par l'utilisateur) se calculent à partir de la **date de départ explicite de l’objectif**, pas de la date courante à chaque affichage. Adapter ce cycle si l’utilisateur choisit une autre durée. Chaque jalon contient : livrable ou résultat attendu, critère d’acceptation vérifiable, échéance, statut. Ne pas prendre une activité (« faire de la prospection ») pour un résultat (« nombre de pilotes réellement actifs »).
 
 ## 5. Navigation et comportement du chat
 
@@ -89,15 +100,19 @@ Ne pas afficher de tableaux complexes à l’ouverture. Arbre, historique, strat
 
 ## 8. Modèle de données et interface future
 
-Socle Supabase minimal séparé de l’ancien modèle : `kyg_workspaces` (propriétaire et fuseau), `kyg_goals` (volet, SMART, état), `kyg_milestones` (horizons et preuves), `kyg_actions` (tâches et focus unique), `kyg_ideas` (coffre et réexamen).
+Socle Supabase indépendant de l'ancien modèle : `kyg_workspaces` (propriétaire et fuseau), `kyg_areas` (volets/sous-volets définis par chaque utilisateur), `kyg_goals` (catégorie référencée par `area_id`, SMART et état), `kyg_milestones` (horizons flexibles et preuves), `kyg_actions` (tâches et focus unique), `kyg_ideas` (coffre et réexamen), `kyg_measurements` (mesures réelles).
+
+**Migration :** `sql/kyg_customizable_areas_v11.sql` fait évoluer la base v1 vers des catégories dynamiques en conservant l'objectif Doctracker. L'ancienne contrainte à trois catégories et les champs texte `area/subarea` sont retirés après conversion. Les noms restent personnalisables et les nouvelles catégories ne nécessitent aucune migration.
 
 **États** : objectifs `draft / active / paused / achieved / archived` ; jalons `proposed / planned / reached / missed / cancelled` ; actions `backlog / ready / in_progress / done / discarded` ; idées `parked / activated / archived`. Les mises à jour sont ciblées par identifiants, sans écraser un objet voisin.
 
 **Sécurité :** données de vie personnelle privées ; ne stocker dans GitHub que des règles et exemples non confidentiels. RLS par propriétaire sur les tables exposées, pas d’accès anonyme. Tant qu’aucun utilisateur Supabase Auth n’existe, seul le connecteur administrateur peut initialiser le coffre ; attacher explicitement le workspace au compte avant de donner accès à l’application.
 
-**Future API de planification, facultative :** entrée en langage naturel → extraction d’intention → consultation du contexte minimal → **proposition structurée** (`area, goal, milestones, actions, confidence, unresolved_questions`) → validation humaine → écriture transactionnelle / journalisée. Le frontend n’a ni clé modèle ni droit d’exécuter des décisions IA directement. Même moteur de règles de validation pour chat et application.
+**Application autonome d'abord, API IA ensuite :** les parcours de création/édition/archivage des catégories, objectifs, jalons, actions et idées doivent exister sans IA ; menus et arbre sont alimentés dynamiquement par Supabase. Tout champ « ajouter un objectif » doit générer de nouvelles **données**, jamais une nouvelle branche de code. Le suivi, les échéances, les jalons et la progression ne dépendent pas du modèle. Le code change uniquement quand une fonctionnalité commune du produit évolue, pas lorsqu'un utilisateur ajoute un objet.
 
-**Attention à l’ancien frontend :** il cible encore l’ancienne structure `tenants/domains/objectives/axes/projects/actions` et une ancienne URL Supabase. Ne pas changer sa configuration vers le nouveau projet ni fusionner le code UI avant une adaptation et des tests réels. Préférer un adaptateur/migration contrôlé, sans doublons de données.
+**Future API de planification, facultative :** saisie naturelle → extraction d'intention → lecture des catégories et objectifs actuels du workspace → **proposition structurée** (`area_id, goal, milestones, actions, confidence, unresolved_questions`) → validation humaine → écriture transactionnelle / journalisée. Les catégories peuvent être **proposées** ou sélectionnées dans les données existantes, jamais figées dans le prompt ou le frontend. Les clés modèles restent côté serveur. Le moteur IA ne doit pas être autorisé à écrire directement les décisions sans les contrôles métier.
+
+**État actuel — ne pas confondre cible et réalisation :** le frontend historique ne propose pas encore le parcours autonome et personnalisable. Il cible encore l’ancienne structure `tenants/domains/objectives/axes/projects/actions` et une ancienne URL Supabase. Ne pas changer sa configuration vers le nouveau projet ni fusionner le code UI avant une adaptation et des tests réels. Préférer un adaptateur/migration contrôlé, sans doublons de données.
 
 ## 9. Critères de réussite de ce système
 
@@ -105,7 +120,9 @@ Socle Supabase minimal séparé de l’ancien modèle : `kyg_workspaces` (propri
 - Pouvoir connaître sa **prochaine action** en une requête, sans parcourir tous ses objectifs.
 - Pour chaque objectif actif : indicateur, jalons datés, avancement réel explicable.
 - Pouvoir faire une revue 1/3/6/12 mois sans reconstruire le contexte.
-- Pouvoir fonctionner **sans API d’IA** ; l’application future ne doit être qu’une autre interface du même planning.
+- Pouvoir fonctionner **sans ChatGPT et sans API d'IA**, grâce aux parcours manuels complets de l'application ; le chat est seulement une passerelle personnelle temporaire pendant la conception.
+- Pouvoir créer ou renommer un volet, un sous-volet, un objectif ou un jalon **sans changer le code**, déployer une interface ou ajouter une migration.
+- Pouvoir brancher plus tard une API d'IA sans changer la structure des données, grâce à une proposition structurée validée avant écriture.
 - S’arrêter d’ajouter des fonctionnalités quand l’organisation est suffisamment fluide.
 
 ## 10. Règle pour toute future conversation
