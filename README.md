@@ -1,3 +1,5 @@
+> **Direction produit en vigueur depuis le 03/11/2026** : [Mémo canonique — boussole KeepYourGoals](docs/CANONICAL_PLANNING.md). Ce mémo décrit le fonctionnement chat d'abord, Supabase comme source de vérité et la planification 1 / 3 / 6 / 12 mois. Les instructions historiques ci-dessous décrivent l'ancien prototype IKIGAI Pilot 3.0 ; ne pas les appliquer automatiquement au nouveau projet Supabase.
+
 # IKIGAI Pilot 3.0 — Natural Focus
 
 IKIGAI Pilot aide une personne submergée à rendre ses objectifs palpables sans lui demander de connaître la gestion de projet.
