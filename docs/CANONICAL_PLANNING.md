@@ -1,5 +1,5 @@
 # CANON — KeepYourGoals : boussole personnelle
-Version 1.1 — 2026-11-03
+Version 1.2 — 2026-11-03
 Statut : **référence fonctionnelle canonique** pour les échanges ChatGPT, les données Supabase et les évolutions de l’application.
 
 > Finalité : protéger l’attention, conserver les possibilités et transformer quelques ambitions choisies en résultats observables. **Ne jamais confondre sophistication de l’outil et progrès réel.**
@@ -128,3 +128,20 @@ Socle Supabase indépendant de l'ancien modèle : `kyg_workspaces` (propriétair
 ## 10. Règle pour toute future conversation
 
 Au début d’un travail KeepYourGoals : (1) consulter ce mémo dans GitHub si disponible, (2) lire l’état réel de Supabase, (3) proposer peu de choix et une seule action prioritaire, (4) persister les décisions validées, (5) ne faire évoluer le code qu’en cas de nécessité démontrée. Ce mémo prime les anciennes spécifications de produit en cas de conflit fonctionnel, sans court-circuiter les exigences de sécurité ni les instructions explicites récentes de l’utilisateur.
+
+
+## 11. Deux rôles de l'assistant et boucle de développement hebdomadaire
+
+**Rôle A — Frontend intelligent personnel.** Au fil des échanges naturels, l'assistant aide l'utilisateur actuel à réfléchir à ses objectifs, à choisir ses jalons SMART, à trier ses idées, à arbitrer ses priorités et à mettre à jour Supabase. Ce rôle sert les besoins quotidiens de l'utilisateur et n'exige **aucune modification de l'application** à chaque nouvelle action, idée, catégorie ou objectif.
+
+**Rôle B — Développeur de l'application indépendante.** À partir des interactions réellement accessibles pendant la semaine et des frictions rencontrées, l'assistant identifie ce qui doit devenir une **fonctionnalité générique** de KeepYourGoals. Il compare cette vision avec le code, la sécurité, le schéma et les tests, puis réalise des améliorations utiles et vérifiables. L'application doit pouvoir effectuer ces opérations **sans ChatGPT**, et sans changement de code pour la création de nouveaux objets métier. Une future API d'IA ne doit être qu'une couche d'aide facultative.
+
+**Chaque semaine :**
+1. Lire ce mémo, le [README](../README.md) et [les checkpoints d'alignement](PRODUCT_ALIGNMENT.md).
+2. Analyser uniquement les retours d'usage qui sont **effectivement accessibles** depuis les sept jours écoulés ; ne pas inventer des apprentissages lorsque les conversations ne sont pas consultables.
+3. Enregistrer les besoins de produit **réutilisables et anonymisés** ; garder les détails personnels et les informations sensibles dans Supabase privé ou dans le chat, jamais dans GitHub public.
+4. Comparer l'application indépendante à ces besoins ; sélectionner au plus trois axes de travail et les prioriser par diminution réelle de la friction.
+5. Implémenter les changements pertinents sur une branche avec tests et PR traçable ; ne pas fusionner des changements non vérifiés, ni déployer ou modifier des données réelles de façon destructive sans validation. Les mises à jour documentaires peuvent être committées directement.
+6. Publier un **checkpoint daté** dans `docs/PRODUCT_ALIGNMENT.md` et actualiser le **checkpoint courant du README** : besoins appris, capacités réellement livrées, tests exécutés, lacunes et prochaine priorité. La revue est utile même lorsque la conclusion est **aucun changement de code nécessaire**.
+
+**Critère clé d'alignement :** une opération qui a nécessité l'aide de ChatGPT cette semaine devrait, si elle est récurrente et généralisable, devenir réalisable par une personne seule dans l'application. On mesure la réduction de dépendance au chat, pas la quantité de code ajouté.
