@@ -1,5 +1,5 @@
 # CANON — KeepYourGoals : boussole personnelle
-Version 1.2 — 2026-11-03
+Version 1.3 — 2026-11-03
 Statut : **référence fonctionnelle canonique** pour les échanges ChatGPT, les données Supabase et les évolutions de l’application.
 
 > Finalité : protéger l’attention, conserver les possibilités et transformer quelques ambitions choisies en résultats observables. **Ne jamais confondre sophistication de l’outil et progrès réel.**
@@ -152,3 +152,17 @@ Au début d’un travail KeepYourGoals : (1) consulter ce mémo dans GitHub si d
 L'utilisateur délègue **entièrement l'initiative et le travail de développement hebdomadaire**, mais conserve **exclusivement la décision de merge**. Entre les checkpoints, ne pas lui demander de gérer des tickets ni d'arbitrer des détails techniques ordinaires. L'assistant est responsable de la conception, du code, des tests qu'il peut réaliser et de PR clairement documentées. Les PR, même testées, restent ouvertes jusqu'à décision explicite de l'utilisateur. Le développement n'est pas une autorisation de déployer. Toute modification sensible ou destructrice nécessite aussi un accord dédié.
 
 **À chaque checkpoint** : rappeler la vision et les frictions observées, lister les PR prêtes ou bloquées, les tests exécutés et les risques, recommander pour chaque PR **MERGER / REPORTER / NE PAS MERGER** et solliciter une validation simple. Noter la décision dans le journal produit. Les README/checkpoints documentaires peuvent être tenus à jour sur la branche principale sans fusionner de code applicatif.
+
+
+## 13. Initialisation portable et mémoire partagée entre conversations
+
+**Fichier d'entrée obligatoire pour toute nouvelle session KeepYourGoals : [`START_HERE.md`](../START_HERE.md).** Une nouvelle conversation n'a pas besoin de connaître les échanges antérieurs si les informations durables ont été sauvegardées : elle suit ce fichier, retrouve la vision dans GitHub et charge **l'état réel** dans le projet Supabase **`mzxgpdwjklvoqsjclrtz`**, via le compte connecté **« Keep Yours Goals »**. Ne pas demander à l'utilisateur de communiquer à nouveau ces identifiants.
+
+**Répartition de la mémoire :**
+- **GitHub public :** règles de fonctionnement, modèle produit et checkpoints anonymisés. Aucun historique privé, aucune information personnelle sensible ni clé d'accès.
+- **Supabase privé :** `kyg_workspaces`, `kyg_areas`, `kyg_goals`, `kyg_milestones`, `kyg_actions`, `kyg_ideas`, `kyg_measurements`, plus `kyg_context_notes` pour les décisions, contraintes et préférences durables explicitement confirmées. Chaque nouvelle session lit ces éléments **selon la demande** et les filtre par workspace.
+- **ChatGPT :** session éphémère servant d'interface intelligente personnelle. Le nouveau chat ne prétend pas reconstruire les échanges non persistés ni avoir accès aux outils indisponibles.
+
+**Handoff :** après une nouvelle décision durable, mettre à jour l'objet Supabase correspondant ; le prochain chat retrouve ces données via `START_HERE.md`. Préférer des notes structurées et sobres dans `kyg_context_notes`, jamais une transcription complète. Un changement de vision du produit entraîne une mise à jour explicite des documents canoniques et, si besoin, du checkpoint.
+
+**Développement :** le rôle développeur hebdomadaire lit également ce protocole de reprise, mais continue à travailler en branches et PR sans aucun merge automatique. **Le mécanisme de reprise ne change ni les droits ni les règles d'approbation.**
