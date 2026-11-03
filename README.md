@@ -100,7 +100,7 @@ Les contrôles fonctionnent quel que soit le fournisseur :
 sql/03_natural_intake_multi_provider.sql
 ```
 
-3. Remplacer le dossier `public/`.
+3. Mettre à jour les fichiers du site à la racine du dépôt.
 4. Remplacer :
 
 ```text
@@ -142,7 +142,7 @@ window.APP_CONFIG = {
 };
 ```
 
-Ne jamais placer une clé Groq, OpenAI, Stripe, `service_role` ou `sb_secret_...` dans `public/`.
+Ne jamais placer une clé Groq, OpenAI, Stripe, `service_role` ou `sb_secret_...` dans les fichiers publics de ce dépôt.
 
 ## Aperçu
 
@@ -155,7 +155,7 @@ public/preview.html
 ## Tests statiques
 
 ```bash
-node --check public/app.js
+node --check app.js
 node tests/smoke.mjs
 ```
 
