@@ -147,3 +147,18 @@ dialog{border:0;padding:0;background:transparent;color:inherit}dialog::backdrop{
 
 @media(max-width:900px){.natural-intake{grid-template-columns:1fr}.natural-promise{grid-column:auto}.natural-composer-foot{grid-template-columns:auto 1fr auto}.provider-state{font-size:.68rem}}
 @media(max-width:640px){.natural-intake{padding:22px 16px;border-radius:24px}.natural-composer{border-radius:20px}.natural-composer-foot{grid-template-columns:auto 1fr auto}.provider-state{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.proposal-tree-row.level-1{margin-left:10px}.proposal-tree-row.level-2{margin-left:20px}.proposal-tree-row.level-3{margin-left:30px}.proposal-tree-row.level-4{margin-left:40px}.free-answer{grid-template-columns:1fr}.free-answer button{width:100%}}
+
+/* Calme par defaut : une seule action visible, le reste sur demande. */
+.focus-actions{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.focus-done{border:1px solid var(--border-strong);background:rgba(255,255,255,.9);color:var(--accent);border-radius:999px;padding:.6rem .9rem;font-size:.83rem;font-weight:700;cursor:pointer}
+.focus-done:disabled{opacity:.45;cursor:default}
+.today-more>summary{list-style:none;cursor:pointer;font-size:.86rem;color:var(--text-2);text-align:center;padding:.7rem}
+.today-more>summary::-webkit-details-marker{display:none}
+.today-more>summary:before{content:'⌄';margin-right:.5rem}
+.today-more[open]>summary{margin-bottom:1rem}
+.today-quiet-foot{display:grid;justify-items:center;gap:.4rem;margin:1.1rem auto 0}
+.today-quiet-foot .reassurance{margin:.2rem 0}
+.idea-shortcut{font-size:.82rem;color:var(--text-2);padding:.65rem .9rem;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.65);cursor:pointer}
+.idea-actions{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.9rem}
+.idea-actions button{padding:.55rem .8rem;border-radius:999px;border:1px solid var(--border-strong);background:var(--surface-soft);color:var(--text-2);font-size:.78rem;cursor:pointer}
+.ideas-due-dot{position:absolute;right:10px;top:10px;height:7px;width:7px;border-radius:50%;background:var(--text-3)}
