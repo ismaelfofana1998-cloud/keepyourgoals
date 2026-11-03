@@ -7,9 +7,11 @@ Ce journal est le **carnet de transmission** entre deux usages du même assistan
 
 Ce fichier consigne l'**écart** entre l'expérience souhaitée et l'expérience réellement implémentée. Il ne doit pas devenir une liste infinie d'idées.
 
+**Point d'entrée entre conversations :** [`START_HERE.md`](../START_HERE.md). Le modèle opérationnel de l'utilisateur et la mémoire durable privée sont sur Supabase **`mzxgpdwjklvoqsjclrtz`**, compte **« Keep Yours Goals »** ; le dépôt public ne contient que les apprentissages produit anonymisés.
+
 ## Règles de la revue hebdomadaire
 
-1. Lire d'abord `README.md`, `docs/CANONICAL_PLANNING.md`, ce journal, les changements GitHub, et l'état pertinent du projet Supabase `mzxgpdwjklvoqsjclrtz`.
+1. Lire d'abord `START_HERE.md`, `README.md`, `docs/CANONICAL_PLANNING.md`, ce journal, les changements GitHub, et l'état pertinent du projet Supabase `mzxgpdwjklvoqsjclrtz`, notamment `kyg_context_notes` (sans recopier les données privées dans ce dépôt).
 2. Recenser les demandes et les difficultés exprimées pendant les sept derniers jours **uniquement si elles sont effectivement consultables** dans les conversations et données disponibles. Une hypothèse n'est jamais une observation certaine.
 3. Résumer **ce que l'usage dans le chat révèle de l'application attendue**, pas les détails privés de la vie de l'utilisateur. Ne jamais publier dans ce dépôt public des informations personnelles, financières, de santé ou des extraits de conversations confidentiels ; employer des comportements et exemples anonymes.
 4. Distinguer clairement : **besoin confirmé**, **idée à valider**, **hors périmètre / différé**. Ne pas transformer chaque demande ponctuelle en fonctionnalité.
@@ -68,3 +70,12 @@ Sans ChatGPT, un utilisateur connecté pourra **créer un volet inédit**, y cr�
 ---
 
 Les prochains checkpoints sont ajoutés à la suite, en conservant l'historique. Le README ne contient que le résumé et le lien vers le dernier checkpoint.
+
+
+## Amendement de conception — 2026-11-03 : reprise inter-conversations
+
+- **Besoin confirmé :** continuer la gestion personnelle dans un nouveau chat **sans réexpliquer le dépôt, la base Supabase ni les décisions durables**.
+- **Livré :** `START_HERE.md` comme prompt de reprise portable ; protocole GitHub → Supabase → workspace → mémoire privée / objectifs → réponse ; table `kyg_context_notes` protégée pour les préférences, décisions et handoffs non représentés dans les objectifs.
+- **À vérifier lors du prochain checkpoint :** test réel depuis une conversation distincte avec connecteurs disponibles, et vérification des permissions et de la continuité d'une nouvelle note privée.
+- **Limite explicite :** les messages qui n'ont jamais été sauvegardés n'ont pas une copie complète transférable. La reprise offre **la mémoire structurée enregistrée**, pas une archive magique des discussions.
+- **Gouvernance inchangée :** aucune PR applicative n'est mergée sans validation au checkpoint.
