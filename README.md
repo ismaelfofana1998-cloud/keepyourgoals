@@ -1,5 +1,15 @@
 # KeepYourGoals — Application autonome de pilotage d'objectifs
 
+## Reprendre dans n'importe quelle conversation — point d'entrée unique
+
+**[START_HERE.md — Prompt d'initialisation portable](START_HERE.md)**
+
+Dans un nouveau chat, écrire simplement :
+
+> Initialise KeepYourGoals à partir de https://github.com/ismaelfofana1998-cloud/keepyourgoals/blob/main/START_HERE.md et reprends mon organisation depuis Supabase.
+
+Ce fichier dirige le nouvel assistant vers **ce dépôt GitHub** pour les règles et checkpoints, et vers **Supabase « Keep Yours Goals » — projet `mzxgpdwjklvoqsjclrtz`** pour les données personnelles réelles. La mémoire structurée privée `kyg_context_notes` enregistre les décisions et préférences durables qui ne sont pas des objectifs. Il n'est pas nécessaire de redonner ces références à chaque nouvelle conversation. Les contenus jamais sauvegardés dans les sources ne sont pas récupérables intégralement.
+
 > **Source de vérité produit** : [Mémo canonique](docs/CANONICAL_PLANNING.md) · **Historique des apprentissages et de l'alignement** : [Checkpoints produit](docs/PRODUCT_ALIGNMENT.md).
 
 KeepYourGoals est destiné à fonctionner **indépendamment de ChatGPT et sans modification du code à chaque utilisation**. Une personne peut personnaliser ses volets, objectifs SMART, horizons, jalons, actions et idées. L'interface masque la complexité et montre en priorité **une seule prochaine action**. ChatGPT est actuellement l'interface intelligente temporaire utilisée pour piloter une organisation personnelle et identifier, par l'usage, les besoins du produit final. L'IA par API pourra être ajoutée plus tard, sans devenir indispensable au fonctionnement manuel.
@@ -18,6 +28,8 @@ KeepYourGoals est destiné à fonctionner **indépendamment de ChatGPT et sans m
 **Développement autonome, intégration sous validation humaine.** Chaque semaine, le développeur peut coder, tester et préparer des **pull requests**, mais **ne fusionne jamais de code applicatif sur `main`, et ne déploie pas de nouvelle version sans accord explicite**. L'utilisateur n'a rien à piloter entre les revues ; à chaque checkpoint, il reçoit le bilan de la semaine, les tests effectués, les PR prêtes et une recommandation **MERGER / REPORTER / NE PAS MERGER**, puis décide. L'existence d'une PR ou d'une automatisation n'autorise pas le merge. Les fichiers de documentation du checkpoint peuvent être actualisés directement sur `main`.
 
 ## Checkpoint d'alignement courant — 03/11/2026
+
+**Continuité inter-conversations :** nouveau [protocole START_HERE.md](START_HERE.md) ; mémoire des préférences et décisions conservée dans `kyg_context_notes` (Supabase privé, RLS propriétaire). Cette mise en place ne change pas le code de l'application ni la règle de validation des merges.
 
 **Vision du produit :** catégories et objectifs librement configurables, méthode SMART, jalons adaptables, coffre à idées, une seule action visible ; autonomie totale vis-à-vis de ChatGPT. Le chat reste une passerelle de conception sans frais API.
 
