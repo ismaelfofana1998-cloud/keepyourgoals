@@ -15,8 +15,8 @@ Ce fichier consigne l'**écart** entre l'expérience souhaitée et l'expérience
 4. Distinguer clairement : **besoin confirmé**, **idée à valider**, **hors périmètre / différé**. Ne pas transformer chaque demande ponctuelle en fonctionnalité.
 5. Mettre en regard les besoins confirmés et les capacités indépendantes réellement testées (UI, Supabase, auth, logique métier). Noter les écarts avec des preuves vérifiables : fichiers, tests, captures si disponibles, PR/commits.
 6. Choisir **au plus 1 à 3 améliorations de valeur** par semaine. En développer au moins une quand un besoin confirmé et un chemin sécurisé existent. Éviter les nouvelles couches d'abstraction sans nécessité.
-7. Développer dans une branche, exécuter les tests disponibles et ouvrir une PR traçable ; corriger si possible les échecs. Ne pas fusionner un changement non testé, ne pas déployer ni modifier la base de production de manière destructive sans cadre de sécurité et validation appropriée. Les changements documentaires sans impact opérationnel peuvent être directement committés.
-8. Actualiser la section « Checkpoint courant » du README, ajouter un checkpoint daté ici et expliquer **ce qui a été effectivement livré**, **ce qui reste bloquant** et la **prochaine priorité**.
+7. Développer de manière autonome sur une branche, exécuter les tests disponibles et ouvrir une PR traçable ; corriger si possible les échecs. **AUCUN MERGE de PR et AUCUN déploiement de nouvelle version sans accord explicite de l'utilisateur à la date du checkpoint**, même avec tous les tests au vert. Ne pas modifier la base de production de manière destructive sans validation dédiée. Seuls les changements documentaires des checkpoints peuvent être directement committés sur `main`.
+8. Actualiser la section « Checkpoint courant » du README, ajouter un checkpoint daté ici et expliquer **ce qui est prêt en PR (pas forcément fusionné)**, **ce qui reste bloquant** et la **prochaine priorité**. Donner une recommandation **MERGER / REPORTER / NE PAS MERGER** pour chaque PR et demander une décision simple. Ne jamais interpréter l'absence de réponse comme un accord.
 9. Si aucune amélioration n'est justifiée, écrire explicitement « pas de changement de code utile cette semaine » ; ce n'est pas un échec. Ne pas inventer de travail pour remplir la revue.
 10. En cas d'accès insuffisant aux conversations, à Supabase, à GitHub ou aux tests, signaler la limite et documenter honnêtement ce qui a été vérifié. Pas de déclarations de tests réussis sans exécution.
 
@@ -28,7 +28,8 @@ Ce fichier consigne l'**écart** entre l'expérience souhaitée et l'expérience
 - **Besoins confirmés** : besoins utiles à tous, accompagnés de critères d'acceptation.
 - **Alignement réel** : pour chaque capacité, statut `Aligné`, `Partiel`, `Absent` ou `Non vérifié`, avec preuve et écart.
 - **Décision de la semaine** : travail prioritaire et pourquoi il vaut mieux que les autres possibilités.
-- **Réalisation** : commits, PR, migration et tests exécutés (ou aucun, selon le cas).
+- **Réalisation** : commits, PR non fusionnées, migration et tests réellement exécutés (ou aucun, selon le cas).
+- **Décision de merge** : pour chaque PR, recommandation `MERGER / REPORTER / NE PAS MERGER`, décision explicite de l'utilisateur et état effectif (`en attente / fusionnée après accord / abandonnée`).
 - **Risques / blocages** : sécurité, ergonomie, dépendances, accès ou non-vérification.
 - **Checkpoint suivant** : 1 à 3 points, pas une feuille de route interminable.
 
