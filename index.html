@@ -53,12 +53,12 @@
     </header>
 
     <main class="app-main">
-      <section id="view-today" class="app-view" aria-labelledby="today-title">
+      <section id="view-today" class="app-view active-view" aria-labelledby="today-title">
         <div class="today-layout">
           <div class="today-hero">
             <div class="today-hero-copy">
               <p id="today-greeting" class="overline soft">BONJOUR</p>
-              <h1 id="today-title">Aujourd’hui,<br />avançons sur une seule chose.</h1>
+              <h1 id="today-title">Maintenant,<br />une seule chose.</h1>
             </div>
             <article id="main-focus-card" class="main-focus-card empty">
               <div class="focus-card-head"><span class="soft-pill">Maintenant</span><span id="main-focus-duration" class="tiny-meta"></span></div>
@@ -66,15 +66,19 @@
                 <h2 id="main-focus-title">Tout est rangé.</h2>
                 <p id="main-focus-context">Choisis une prochaine action quand tu es prêt.</p>
               </div>
-              <div id="main-focus-start" class="inline-action hidden" role="button" tabindex="0"><span class="play-disc">▶</span><span>Commencer</span></div>
+              <div class="focus-actions"><div id="main-focus-start" class="inline-action hidden" role="button" tabindex="0"><span class="play-disc">›</span><span>Voir l’action</span></div><button id="main-focus-done" class="focus-done" type="button" disabled>✓ C’est fait</button></div>
             </article>
           </div>
 
-          <section class="today-list-section">
+          <details class="today-list-section today-more" id="today-more"><summary>Voir les autres actions, si besoin</summary>
             <div class="section-label-row"><h2>Plus tard aujourd’hui</h2><span id="today-total" class="tiny-meta"></span></div>
             <div id="today-secondary-actions" class="calm-task-list"></div>
+
+          </details>
+          <div class="today-quiet-foot">
             <p id="today-reassurance" class="reassurance">Tout le reste est rangé. Tu n’as pas besoin d’y penser maintenant.</p>
-          </section>
+            <button id="today-capture-idea" class="idea-shortcut" type="button">+ Déposer une idée dans le coffre</button>
+          </div>
 
           <section id="energy-checkin" class="energy-checkin hidden">
             <p>Comment te sens-tu aujourd’hui ?</p>
@@ -87,7 +91,7 @@
         </div>
       </section>
 
-      <section id="view-path" class="app-view active-view" aria-labelledby="path-title">
+      <section id="view-path" class="app-view" aria-labelledby="path-title">
         <div class="path-shell">
           <div class="path-intro">
             <div>
@@ -158,9 +162,9 @@
     </main>
 
     <nav class="bottom-dock" aria-label="Navigation principale">
-      <button data-view="path" class="dock-item active"><span class="dock-icon">⌁</span><span>Mon chemin</span></button>
-      <button data-view="today" class="dock-item"><span class="dock-icon">○</span><span>Aujourd’hui</span><b id="today-count" class="dock-count hidden">0</b></button>
-      <button data-view="ideas" class="dock-item"><span class="dock-icon">◇</span><span>Mes idées</span></button>
+      <button data-view="today" class="dock-item active"><span class="dock-icon">○</span><span>Maintenant</span><b id="today-count" class="dock-count hidden">0</b></button>
+      <button data-view="ideas" class="dock-item"><span class="dock-icon">◇</span><span>Mes idées</span><span id="ideas-due-dot" class="ideas-due-dot hidden" aria-label="Une ou plusieurs idées à revoir"></span></button>
+      <button data-view="path" class="dock-item"><span class="dock-icon">⌁</span><span>Mon chemin</span></button>
     </nav>
   </div>
 

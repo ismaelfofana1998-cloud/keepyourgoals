@@ -34,7 +34,7 @@ const state = {
   ideas: [],
   proposals: [],
   checkin: null,
-  view: 'path',
+  view: 'today',
   path: { level: 'root', domainId: null, objectiveId: null, axisId: null, projectId: null },
   currentAction: null,
   currentProposal: null,
@@ -244,6 +244,8 @@ function renderToday() {
   $('#main-focus-duration').textContent = main ? minuteLabel(main.estimated_minutes) : '';
   $('#main-focus-start').classList.toggle('hidden', !main);
   $('#main-focus-start').dataset.actionId = main?.id || '';
+  $('#main-focus-done').disabled = !main;
+  $('#main-focus-done').dataset.toggleAction = main?.id || '';
 
   $('#today-secondary-actions').innerHTML = secondary.length
     ? secondary.map(actionRowHtml).join('')
@@ -490,9 +492,11 @@ function renderProjectDetail() {
 }
 
 function renderIdeas() {
-  $('#ideas-list').innerHTML = state.ideas.length ? state.ideas.map(idea => {
+  const dueCount = state.ideas.filter(idea => idea.review_after && idea.review_after <= isoToday()).length;
+  $('#ideas-due-dot').classList.toggle('hidden', dueCount === 0);
+  $('#ideas-list').innerHTML = state.ideas.length ? [...state.ideas].sort((a,b) => Number(b.review_after <= isoToday()) - Number(a.review_after <= isoToday())).map(idea => {
     const reviewDue = idea.review_after && idea.review_after <= isoToday();
-    return `<article class="idea-card" data-idea-id="${idea.id}"><h3>${esc(idea.title)}</h3><p>${esc(idea.description || 'Rangée sans obligation.')}</p><div class="idea-meta"><span>Ajoutée ${dateLabel(idea.created_at.slice(0,10))}</span><span class="${reviewDue ? 'idea-review' : ''}">${reviewDue ? 'À revoir' : `Revoir ${dateLabel(idea.review_after)}`}</span></div></article>`;
+    return `<article class="idea-card" data-idea-id="${idea.id}"><h3>${esc(idea.title)}</h3><p>${esc(idea.description || 'Rangée sans obligation.')}</p><div class="idea-meta"><span>Ajoutée ${dateLabel(idea.created_at.slice(0,10))}</span><span class="${reviewDue ? 'idea-review' : ''}">${reviewDue ? 'À revoir' : `Revoir ${dateLabel(idea.review_after)}`}</span></div>${reviewDue ? `<div class="idea-actions"><button type="button" data-idea-snooze="${esc(idea.id)}">Revoir dans 30 jours</button><button type="button" data-idea-archive="${esc(idea.id)}">Classer sans suite</button></div>` : ''}</article>`;
   }).join('') : '<div class="empty-calm">Aucune idée ne te demande de l’attention.</div>';
 }
 
@@ -557,7 +561,8 @@ function bindStaticEvents() {
     $('#auth-message').textContent = error ? friendlyAuthError(error.message) : 'Ton espace est créé. Vérifie ton e-mail si une confirmation est demandée.';
   });
 
-  $$('.dock-item').forEach(item => item.addEventListener('click', () => switchView(item.dataset.view)));
+  $('.dock-item').forEach(item => item.addEventListener('click', () => switchView(item.dataset.view)));
+  $('#today-capture-idea').addEventListener('click', () => { switchView('ideas'); $('#idea-quick-input').focus(); });
   $('#profile-trigger').addEventListener('click', () => $('#profile-sheet').showModal());
   $('#workspace-select').addEventListener('change', async e => {
     state.tenant = state.tenants.find(t => t.id === e.target.value);
@@ -602,6 +607,11 @@ async function handleBodyClick(event) {
 
   const actionRow = event.target.closest('[data-action-id]');
   if (actionRow && !taskCircle) openActionSheet(actionRow.dataset.actionId);
+
+  const ideaSnooze = event.target.closest('[data-idea-snooze]');
+  if (ideaSnooze) { await resolveIdeaReview(ideaSnooze.dataset.ideaSnooze, 'snooze'); return; }
+  const ideaArchive = event.target.closest('[data-idea-archive]');
+  if (ideaArchive) { await resolveIdeaReview(ideaArchive.dataset.ideaArchive, 'archive'); return; }
 
   const mainStart = event.target.closest('#main-focus-start');
   if (mainStart?.dataset.actionId) openActionSheet(mainStart.dataset.actionId);
@@ -760,6 +770,15 @@ async function saveQuickIdea(event) {
   const { error } = await db.from('ideas').insert({ tenant_id:state.tenant.id, title:title.slice(0,180), description:rest.join('\n').trim() || null, review_after:addDays(isoToday(),7) });
   if (error) return toast(error.message);
   input.value = ''; await loadAll(); renderIdeas(); toast('Idée rangée. Tu peux la laisser ici.');
+}
+
+async function resolveIdeaReview(id, choice) {
+  if (!state.ideas.some(idea => idea.id === id)) return;
+  const payload = choice === 'archive' ? { status:'rejected' } : { review_after:addDays(isoToday(), 30) };
+  const { error } = await db.from('ideas').update(payload).eq('id', id).eq('tenant_id', state.tenant.id);
+  if (error) return toast('Impossible de mettre à jour cette idée.');
+  await loadAll(); renderIdeas();
+  toast(choice === 'archive' ? 'Idée classée sans suite.' : 'Idée conservée dans le coffre pour 30 jours.');
 }
 
 async function saveEnergyCheckin(level) {
