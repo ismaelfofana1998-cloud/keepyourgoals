@@ -13,6 +13,10 @@ KeepYourGoals est destiné à fonctionner **indépendamment de ChatGPT et sans m
 
 **La boucle de développement est indépendante du chat :** les exigences découvertes dans les usages du chat nourrissent le produit, mais l'application ne doit jamais avoir besoin de ChatGPT pour exécuter une fonctionnalité. Un changement d'objectif est une **modification de données**, pas un commit. Les changements de code concernent uniquement les fonctionnalités réutilisables de l'application.
 
+## Validation des livraisons : décision au checkpoint
+
+**Développement autonome, intégration sous validation humaine.** Chaque semaine, le développeur peut coder, tester et préparer des **pull requests**, mais **ne fusionne jamais de code applicatif sur `main`, et ne déploie pas de nouvelle version sans accord explicite**. L'utilisateur n'a rien à piloter entre les revues ; à chaque checkpoint, il reçoit le bilan de la semaine, les tests effectués, les PR prêtes et une recommandation **MERGER / REPORTER / NE PAS MERGER**, puis décide. L'existence d'une PR ou d'une automatisation n'autorise pas le merge. Les fichiers de documentation du checkpoint peuvent être actualisés directement sur `main`.
+
 ## Checkpoint d'alignement courant — 03/11/2026
 
 **Vision du produit :** catégories et objectifs librement configurables, méthode SMART, jalons adaptables, coffre à idées, une seule action visible ; autonomie totale vis-à-vis de ChatGPT. Le chat reste une passerelle de conception sans frais API.
