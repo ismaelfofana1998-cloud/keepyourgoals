@@ -1,9 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 const root=path.resolve(path.dirname(new URL(import.meta.url).pathname),'..');
-const html=fs.readFileSync(path.join(root,'public/index.html'),'utf8');
-const js=fs.readFileSync(path.join(root,'public/app.js'),'utf8');
-const css=fs.readFileSync(path.join(root,'public/styles.css'),'utf8');
+const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+const js=fs.readFileSync(path.join(root,'app.js'),'utf8');
+const css=fs.readFileSync(path.join(root,'styles.css'),'utf8');
 const ids=[...html.matchAll(/\sid="([^"]+)"/g)].map(x=>x[1]);
 const duplicates=ids.filter((x,i)=>ids.indexOf(x)!==i);
 if(duplicates.length)throw new Error(`IDs dupliqués: ${[...new Set(duplicates)].join(', ')}`);
@@ -11,7 +11,8 @@ const referenced=[...js.matchAll(/\$\('#([A-Za-z0-9_-]+)'\)/g)].map(x=>x[1]);
 const dynamicIds=new Set(['natural-free-answer']);
 const missing=[...new Set(referenced.filter(x=>!ids.includes(x)&&!dynamicIds.has(x)))];
 if(missing.length)throw new Error(`IDs absents du HTML: ${missing.join(', ')}`);
-const publicText=fs.readdirSync(path.join(root,'public'),{recursive:true}).filter(x=>typeof x==='string').filter(x=>/\.(js|html|css|json|svg)$/i.test(x)).map(x=>fs.readFileSync(path.join(root,'public',x),'utf8')).join('\n');
+const frontendFiles=['index.html','app.js','styles.css','config.js','config.example.js','manifest.webmanifest','preview.html'];
+const publicText=frontendFiles.map(x=>fs.readFileSync(path.join(root,x),'utf8')).join('\n');
 if(/\b(sk_live_|sk_test_|sb_secret_|service_role\b|OPENAI_API_KEY\s*=|GROQ_API_KEY\s*=)/i.test(publicText))throw new Error('Clé secrète potentielle dans public/.');
 if((css.match(/{/g)||[]).length!==(css.match(/}/g)||[]).length)throw new Error('Accolades CSS déséquilibrées.');
 for(const file of ['sql/00_install.sql','sql/01_upgrade_from_mvp.sql','sql/02_calm_focus_ai_guardrails.sql','sql/03_natural_intake_multi_provider.sql']){
