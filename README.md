@@ -1,4 +1,33 @@
-> **Direction produit en vigueur depuis le 03/11/2026** : [Mémo canonique — boussole KeepYourGoals](docs/CANONICAL_PLANNING.md). Ce mémo décrit le fonctionnement chat d'abord, Supabase comme source de vérité et la planification 1 / 3 / 6 / 12 mois. Les instructions historiques ci-dessous décrivent l'ancien prototype IKIGAI Pilot 3.0 ; ne pas les appliquer automatiquement au nouveau projet Supabase.
+# KeepYourGoals — Application autonome de pilotage d'objectifs
+
+> **Source de vérité produit** : [Mémo canonique](docs/CANONICAL_PLANNING.md) · **Historique des apprentissages et de l'alignement** : [Checkpoints produit](docs/PRODUCT_ALIGNMENT.md).
+
+KeepYourGoals est destiné à fonctionner **indépendamment de ChatGPT et sans modification du code à chaque utilisation**. Une personne peut personnaliser ses volets, objectifs SMART, horizons, jalons, actions et idées. L'interface masque la complexité et montre en priorité **une seule prochaine action**. ChatGPT est actuellement l'interface intelligente temporaire utilisée pour piloter une organisation personnelle et identifier, par l'usage, les besoins du produit final. L'IA par API pourra être ajoutée plus tard, sans devenir indispensable au fonctionnement manuel.
+
+## Deux rôles complémentaires, deux rythmes
+
+| Rôle de l'assistant | Quand | Résultat attendu |
+| --- | --- | --- |
+| **Frontend intelligent personnel** | Pendant l'usage quotidien dans le chat | Clarifier et organiser les objectifs, jalons, priorités et idées. Lire/écrire les données dans Supabase, sans créer de nouvelles fonctionnalités pour chaque utilisation. |
+| **Développeur de KeepYourGoals** | Revue de produit hebdomadaire | Déduire des difficultés observées des besoins généralisables, comparer au code et à la base, implémenter les améliorations utiles avec tests et traçabilité, puis mettre à jour le checkpoint. |
+
+**La boucle de développement est indépendante du chat :** les exigences découvertes dans les usages du chat nourrissent le produit, mais l'application ne doit jamais avoir besoin de ChatGPT pour exécuter une fonctionnalité. Un changement d'objectif est une **modification de données**, pas un commit. Les changements de code concernent uniquement les fonctionnalités réutilisables de l'application.
+
+## Checkpoint d'alignement courant — 03/11/2026
+
+**Vision du produit :** catégories et objectifs librement configurables, méthode SMART, jalons adaptables, coffre à idées, une seule action visible ; autonomie totale vis-à-vis de ChatGPT. Le chat reste une passerelle de conception sans frais API.
+
+**État réel :** le modèle Supabase `mzxgpdwjklvoqsjclrtz` dispose désormais des catégories personnalisables et du stockage objectifs/jalons/actions/idées. En revanche, **l'ancienne application IKIGAI Pilot 3.0 n'utilise pas encore ce nouveau modèle** ; l'autonomie n'est pas encore démontrée de bout en bout.
+
+**Écart prioritaire :** faire fonctionner un parcours manuel générique (connexion, ajouter un volet, créer un objectif SMART, ajouter des jalons personnalisés, consulter sa prochaine action), puis le tester. Ne pas ajouter une API IA avant d'avoir validé ce socle.
+
+**Preuves et décisions :** [Checkpoint initial détaillé et format des revues hebdomadaires](docs/PRODUCT_ALIGNMENT.md#checkpoint-initial--2026-11-03-cadre-de-départ-pas-une-revue-de-7-jours). À chaque revue, mettre à jour **ce bloc** avec la date, les nouveaux apprentissages, l'écart produit, les modifications effectivement testées et les blocages.
+
+## Ancien prototype — archive fonctionnelle (non alignée avec la nouvelle base)
+
+Les sections historiques ci-dessous décrivent **IKIGAI Pilot 3.0**, son ancienne structure de tables et ses consignes de déploiement. Elles ne décrivent pas l'architecture cible actuelle ; **ne pas exécuter leurs scripts sur le nouveau projet Supabase**.
+
+---
 
 # IKIGAI Pilot 3.0 — Natural Focus
 
