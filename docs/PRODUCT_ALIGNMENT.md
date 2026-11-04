@@ -79,3 +79,18 @@ Les prochains checkpoints sont ajoutés à la suite, en conservant l'historique.
 - **À vérifier lors du prochain checkpoint :** test réel depuis une conversation distincte avec connecteurs disponibles, et vérification des permissions et de la continuité d'une nouvelle note privée.
 - **Limite explicite :** les messages qui n'ont jamais été sauvegardés n'ont pas une copie complète transférable. La reprise offre **la mémoire structurée enregistrée**, pas une archive magique des discussions.
 - **Gouvernance inchangée :** aucune PR applicative n'est mergée sans validation au checkpoint.
+
+
+## Observation produit anonymisée — 2026-11-04 : objectifs sans fréquence obligatoire
+
+**Observation issue d'un usage réel :** une personne peut vouloir **conserver un objectif d'apprentissage** dans son arbre tout en refusant toute obligation quotidienne ou toute notification. Certains domaines sont prioritaires, d'autres sont suivis uniquement sur demande. Les cours structurés peuvent comporter des préconditions administratives ou pédagogiques sans empêcher tout travail libre sur un dossier.
+
+**Capacité du modèle de données :** objectifs `active/paused`, priorités, jalons proposés, actions facultatives et focus unique existent. **Écart applicatif non vérifié :** l'ancienne UI ne démontre pas encore la distinction entre « actif et planifié », « actif sans rappel », « en pause mais disponible à la demande », ni la faculté d'explorer sans progression automatique.
+
+**Exigences réutilisables pour la revue de développement :**
+1. Un objectif peut être enregistré **sans tâche, sans cadence, sans rappel** ; pas de mécanisme qui crée automatiquement des obligations quotidiennes.
+2. La priorité ordonnée d'un objectif et sa **cadence** sont deux propriétés distinctes ; la présence d'un objectif en pause ne doit pas empêcher son accès volontaire.
+3. Un seul focus prioritaire est visible par défaut ; le programme complet et les contenus historiques restent disponibles.
+4. Si le produit reçoit des sous-objectifs à jalons 1/3/6/12 mois, ceux-ci restent au statut « proposé » tant que les critères et échéances ne sont pas validés.
+
+**Livré dans l'usage ChatGPT/Supabase :** la personnalisation des données et la priorisation par statut / rang ; les tâches et jalons restent consultables par le connecteur. **Non livré dans l'application indépendante :** parcours UX validé et test de bout en bout. Ce constat ne vaut pas autorisation de merge ni de déploiement.
