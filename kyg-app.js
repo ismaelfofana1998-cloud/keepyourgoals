@@ -517,6 +517,7 @@ function bindEvents() {
         await state.client.auth.signInWithPassword(args);
       if(error) throw error;
       if(state.signup && !data?.session){
+        toggleSignup();
         showAuth("Compte créé. Consultez vos e-mails pour confirmer votre adresse, puis connectez-vous.",true);
         return;
       }
