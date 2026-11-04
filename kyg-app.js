@@ -16,7 +16,8 @@ const state = {
   selectedGoalId: null,
   view: "now",
   signup: false,
-  busy: false
+  busy: false,
+  bootstrapTask: null
 };
 
 function esc(value) {
@@ -133,6 +134,8 @@ async function reload() {
   setSync("À jour");
 }
 async function bootstrap() {
+  if(state.bootstrapTask) return state.bootstrapTask;
+  state.bootstrapTask = (async () => {
   if (!state.session?.user) {
     state.workspace=null;
     showAuth();
@@ -148,6 +151,9 @@ async function bootstrap() {
     toast(niceError(error),true);
     // No false "all synced" status when a user lacks access.
   }
+  })();
+  try { return await state.bootstrapTask; }
+  finally { state.bootstrapTask = null; }
 }
 async function initialize() {
   bindEvents();
@@ -504,8 +510,10 @@ function bindEvents() {
     $("#auth-message").textContent="";
     try {
       const args={email:$("#email").value.trim(),password:$("#password").value};
+      // Redirect after email verification to the current site, if allowed in Supabase Auth settings.
+      const signupArgs={...args,options:{emailRedirectTo:window.location.origin+window.location.pathname}};
       const {data,error}=state.signup?
-        await state.client.auth.signUp(args):
+        await state.client.auth.signUp(signupArgs):
         await state.client.auth.signInWithPassword(args);
       if(error) throw error;
       if(state.signup && !data?.session){
