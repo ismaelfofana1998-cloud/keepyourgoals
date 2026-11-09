@@ -27,17 +27,17 @@ KeepYourGoals est destiné à fonctionner **indépendamment de ChatGPT et sans m
 
 **Développement autonome, intégration sous validation humaine.** Chaque semaine, le développeur peut coder, tester et préparer des **pull requests**, mais **ne fusionne jamais de code applicatif sur `main`, et ne déploie pas de nouvelle version sans accord explicite**. L'utilisateur n'a rien à piloter entre les revues ; à chaque checkpoint, il reçoit le bilan de la semaine, les tests effectués, les PR prêtes et une recommandation **MERGER / REPORTER / NE PAS MERGER**, puis décide. L'existence d'une PR ou d'une automatisation n'autorise pas le merge. Les fichiers de documentation du checkpoint peuvent être actualisés directement sur `main`.
 
-## Checkpoint d'alignement courant — 03/11/2026
+## Checkpoint d'alignement courant — 09/11/2026
 
-**Continuité inter-conversations :** nouveau [protocole START_HERE.md](START_HERE.md) ; mémoire des préférences et décisions conservée dans `kyg_context_notes` (Supabase privé, RLS propriétaire). Cette mise en place ne change pas le code de l'application ni la règle de validation des merges.
+**Apprentissage :** un objectif doit rester accessible sans cadence ni rappel obligatoire. La reprise portable reste fondée sur `START_HERE.md` et la mémoire privée Supabase, sans publication de données personnelles.
 
-**Vision du produit :** catégories et objectifs librement configurables, méthode SMART, jalons adaptables, coffre à idées, une seule action visible ; autonomie totale vis-à-vis de ChatGPT. Le chat reste une passerelle de conception sans frais API.
+**État vérifié :** huit tables `kyg_*` présentes dans Supabase, mais parcours autonome complet non démontré ; les fichiers applicatifs principaux n'ont pas pu être récupérés par le connecteur. Aucun test applicatif ou E2E n'a été exécuté et aucune nouvelle PR applicative n'a été ouverte.
 
-**État réel :** le modèle Supabase `mzxgpdwjklvoqsjclrtz` dispose désormais des catégories personnalisables et du stockage objectifs/jalons/actions/idées. En revanche, **l'ancienne application IKIGAI Pilot 3.0 n'utilise pas encore ce nouveau modèle** ; l'autonomie n'est pas encore démontrée de bout en bout.
+**Gouvernance :** aucun merge ni déploiement. Les branches de développement existantes doivent être examinées et testées avant toute décision ; recommandation actuelle **REPORTER**.
 
-**Écart prioritaire :** faire fonctionner un parcours manuel générique (connexion, ajouter un volet, créer un objectif SMART, ajouter des jalons personnalisés, consulter sa prochaine action), puis le tester. Ne pas ajouter une API IA avant d'avoir validé ce socle.
+**Priorité suivante :** vérifier le frontend et ses branches, puis tester un parcours manuel minimal sans IA payante.
 
-**Preuves et décisions :** [Checkpoint initial détaillé et format des revues hebdomadaires](docs/PRODUCT_ALIGNMENT.md#checkpoint-initial--2026-11-03-cadre-de-départ-pas-une-revue-de-7-jours). À chaque revue, mettre à jour **ce bloc** avec la date, les nouveaux apprentissages, l'écart produit, les modifications effectivement testées et les blocages.
+**Détail :** [checkpoint hebdomadaire du 09/11/2026](docs/PRODUCT_ALIGNMENT.md#checkpoint-hebdomadaire--2026-11-09-semaine-du-02-au-09-novembre).
 
 ## Ancien prototype — archive fonctionnelle (non alignée avec la nouvelle base)
 
