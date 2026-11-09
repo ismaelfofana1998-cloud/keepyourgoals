@@ -94,3 +94,31 @@ Les prochains checkpoints sont ajoutés à la suite, en conservant l'historique.
 4. Si le produit reçoit des sous-objectifs à jalons 1/3/6/12 mois, ceux-ci restent au statut « proposé » tant que les critères et échéances ne sont pas validés.
 
 **Livré dans l'usage ChatGPT/Supabase :** la personnalisation des données et la priorisation par statut / rang ; les tâches et jalons restent consultables par le connecteur. **Non livré dans l'application indépendante :** parcours UX validé et test de bout en bout. Ce constat ne vaut pas autorisation de merge ni de déploiement.
+
+
+## Checkpoint hebdomadaire — 2026-11-09 (semaine du 02 au 09 novembre)
+
+### Apprentissages vérifiables et exigences
+
+- Le protocole de reprise portable et la séparation entre données privées et règles publiques restent nécessaires ; `START_HERE.md` est cohérent avec le README.
+- L'observation déjà consignée le 04/11 confirme qu'un objectif peut rester accessible sans rappel ni cadence imposée ; priorité et fréquence doivent rester indépendantes.
+- Les échanges de la semaine ne sont pas intégralement consultables dans cette revue : ne pas extrapoler une mesure d'utilisation. Le schéma de `kyg_context_notes` a été vérifié, mais aucune note active n'a été restituée par la requête agrégée ; aucune donnée privée n'est reproduite ici.
+
+### Alignement observé
+
+| Capacité | Statut | Preuve et limite |
+| --- | --- | --- |
+| Volets et sous-volets configurables | **Partiel** | Table `kyg_areas` présente ; parcours autonome non testé. |
+| Objectifs SMART et jalons souples | **Partiel** | Tables `kyg_goals`, `kyg_milestones`, `kyg_measurements` présentes ; interface indépendante non vérifiée. |
+| Coffre à idées | **Partiel** | Table `kyg_ideas` présente ; interaction UI non testée. |
+| Une action principale | **Non vérifié** | Table `kyg_actions` présente ; rendu réel non contrôlé. |
+| Manuel complet, sans ChatGPT ni API payante | **Absent / non démontré** | Ancien prototype documenté ; aucune preuve de parcours complet sur le schéma `kyg_*`. |
+| Reprise inter-conversations | **Partiel** | `START_HERE.md` et table `kyg_context_notes` présents ; test de bout en bout non exécuté. |
+
+### Réalisation, tests et décision
+
+- **Code produit livré : aucun.** Aucun changement de code utile et sûr n'a été identifié sans d'abord résoudre l'accès aux fichiers applicatifs du prototype (lectures `public/index.html` et `public/app.js` retournant 404 par le connecteur). Aucun commit applicatif, aucune PR nouvelle, aucun déploiement ni merge.
+- **Vérifications réellement exécutées :** lecture des cinq documents de référence ; recherche de commits et de branches ; interrogation SQL en lecture seule de `information_schema` (huit tables `kyg_*`) ; inspection du fichier de tests historique `tests/smoke.mjs`. **Aucun test Node, UI, authentification ou E2E exécuté** ; le script historique ne prouve pas la compatibilité avec la nouvelle base.
+- **PR en attente :** la recherche des PR ouvertes via le connecteur n'a retourné aucun résultat ; cela ne prouve pas qu'aucune PR n'existe. Les branches `fix/auth-kyg-supabase-v2-20261104` et `refocus/maintenant-coffre-20261103` existent et doivent être examinées avant toute proposition de fusion. **Recommandation : REPORTER** toute intégration jusqu'à vérification du diff et des tests. Aucun merge effectué.
+- **Risques :** anciennes instructions de déploiement et scripts SQL historiques non compatibles avec la nouvelle base ; ne pas les exécuter en production. Aucune donnée personnelle modifiée.
+- **Priorité unique de la semaine suivante :** récupérer et examiner le frontend réel et les branches en cours, puis tester le parcours manuel minimal sur un environnement isolé avant d'ouvrir une PR ciblée.
