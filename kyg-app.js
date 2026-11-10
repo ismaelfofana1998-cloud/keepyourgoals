@@ -116,7 +116,7 @@ function renderCalendar() {
   $("#calendar-period-label").textContent=calendarPeriodLabel(mode,cursor);
   $("#calendar-weekdays").innerHTML=["Lun.","Mar.","Mer.","Jeu.","Ven.","Sam.","Dim."]
     .map(day=>'<span>'+day+'</span>').join("");
-  $("[data-calendar-mode]").forEach(b=>{
+  $$("[data-calendar-mode]").forEach(b=>{
     const active=b.dataset.calendarMode===mode;
     b.classList.toggle("active",active);
     b.setAttribute("aria-pressed",String(active));
@@ -321,7 +321,7 @@ function setView(view) {
   if (!["now","calendar","path","ideas"].includes(view))return;
   state.view=view;
   for(const v of ["now","calendar","path","ideas"]) $("#screen-"+v).classList.toggle("hidden",v!==view);
-  $("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===view));
+  $$("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===view));
   if(view==="calendar")renderCalendar();
   window.scrollTo({top:0,behavior:"smooth"});
 }
