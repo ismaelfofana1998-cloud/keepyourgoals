@@ -110,5 +110,5 @@ functions.navigateCalendar(1);
 assert.equal(st.selectedCalendarDate,'2026-11-19');
 st.calendarMode='month';
 functions.renderCalendar();
-assert.equal((element('#calendar-grid').innerHTML.match(/class="calendar-day /g)||[]).length,42);
+assert.equal((element('#calendar-grid').innerHTML.match(/<div class="calendar-day(?: |")/g)||[]).length,42);
 console.log('Calendrier OK — navigation, dates, 3 niveaux de cascade, tâches indépendantes et affichage partagé.');
