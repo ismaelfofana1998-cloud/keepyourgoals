@@ -219,6 +219,9 @@
       <div class="modal-heading"><h2 id="action-dialog-title">Ajouter une tâche</h2><button class="close-dialog" type="button" data-close="action-dialog" aria-label="Fermer">×</button></div>
       <input id="action-id" type="hidden" name="id">
       <label>Quelle tâche ?<input id="action-title" name="title" required maxlength="180" placeholder="Une action concrète et réalisable"></label>
+      <label>Volet <span class="hint">(filtre facultatif pour retrouver un objectif)</span>
+        <select id="action-area-filter"><option value="">Tous les volets</option></select>
+      </label>
       <label>Objectif parent <span class="hint">(facultatif)</span>
         <select id="action-goal" name="goal_id"><option value="">Aucun — tâche indépendante</option></select>
       </label>
