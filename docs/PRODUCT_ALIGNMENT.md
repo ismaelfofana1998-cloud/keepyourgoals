@@ -142,3 +142,51 @@ Les prochains checkpoints sont ajoutés à la suite, en conservant l'historique.
 **Statut d'alignement :** `Partiel` (implémenté et testé dans une branche, non accessible sur le site publié). **Décision de merge : en attente de validation explicite de l'utilisateur.** Ne pas assimiler le succès CI à une autorisation de mise en ligne. Aucune donnée personnelle de production n'a été modifiée.
 
 **Prochaine priorité unique :** sécuriser le parcours connexion → rattachement du workspace → tests fonctionnels en navigateur, puis soumettre la PR et ses limites à décision de l'utilisateur au checkpoint.
+
+
+## Checkpoint exceptionnel — 2026-11-10 (validation et fusion)
+
+**Autorisation :** l'utilisateur a expressément demandé de « faire les checkpoints nécessaires et merger les branches mergeables ». Cette autorisation couvre les intégrations contrôlées à cet instant, **pas un merge automatique permanent** à l'avenir.
+
+### Retours réels / vision
+
+- L'utilisateur veut **accéder à une interface indépendante** et n'a pas pu se connecter à l'ancien frontend (« Failed to fetch »).
+- L'application doit exploiter le **projet Supabase actuel `mzxgpdwjklvoqsjclrtz`**, sans utiliser les tables de l'ancien prototype.
+- Un **calendrier semaine/mois** doit afficher les tâches et permettre la création directe, indépendamment ou avec rattachement optionnel à `volet (filtre) → objectif → jalon`.
+- Les priorités / idées doivent demeurer discrètes, et l'application rester utilisable **sans ChatGPT ni frais API de modèle**.
+
+### Examen des PR et décision
+
+| PR | État examiné | Décision et preuve |
+| --- | --- | --- |
+| [#2 — connexion, frontend et calendrier](https://github.com/ismaelfofana1998-cloud/keepyourgoals/pull/2) | Initialement non fusionnable : branche en retard sur `main`; 11 fichiers modifiés, CI déjà réussie sur l'ancien tip | **MERGER — EFFECTUÉ** après création d'un commit de rapprochement avec `main` (`e03cdc9`), conservation du README et des décisions canoniques, nouveaux tests verts ; fusion squash `30d5f87ebe440fe418a6f6336b4648b827bfdb9d` |
+| [#1 — ancien focus et coffre](https://github.com/ismaelfofana1998-cloud/keepyourgoals/pull/1) | Non fusionnable et basée sur `app.js`, `styles.css`, anciennes tables `tenants/domains` ; principaux parcours désormais remplacés | **NE PAS MERGER — CLÔTURÉE sans fusion** pour ne pas réintroduire l'ancien modèle. L'amélioration « revoir les idées dans 30 jours » reste une piste de future PR adaptée au nouveau frontend, sans routine imposée |
+
+Les branches ont été comparées avec `main`. Le merge de la PR #2 a préservé `docs/CANONICAL_PLANNING.md`, `docs/PRODUCT_ALIGNMENT.md` et les notes récentes du README. Aucun script SQL de l'ancien prototype n'a été appliqué.
+
+### Tests et publication effectivement constatés
+
+- [GitHub Actions — frontend checks, run #42756523570](https://github.com/ismaelfofana1998-cloud/keepyourgoals/actions/runs/42756523570) : **succès** sur le commit de rapprochement `e03cdc9`. Étapes `node --check kyg-app.js`, `node tests/smoke.mjs`, `node tests/calendar.mjs` toutes **réussies**.
+- [GitHub Pages — build et déploiement, run #42756614423](https://github.com/ismaelfofana1998-cloud/keepyourgoals/actions/runs/42756614423) : **succès**, commit `30d5f87`. Le journal confirme l'URL publique **https://ismaelfofana1998-cloud.github.io/keepyourgoals/**.
+- GitHub `main` vérifié après fusion : `index.html` est l'interface KeepYourGoals et `kyg-app.js` contient le calendrier.
+- Supabase : huit tables de gestion `kyg_*` protégées par RLS, comptes Auth encore absents et workspace initial non rattaché. La publication du frontend **n'a pas modifié les données personnelles en production**.
+- **Non testé :** la page dans un navigateur authentifié, inscription réelle, confirmation e-mail, accès multi-comptes, création et modification E2E de tâches, vérification mobile. Le site Vercel `keepyourgoals.vercel.app` figurant dans les métadonnées du dépôt n'a pas été vérifié (accès au déploiement Vercel insuffisant).
+
+### État d'alignement
+
+| Capacité | Statut | Écart / preuve |
+| --- | --- | --- |
+| Frontend indépendant de ChatGPT | **Livré côté code** | Nouvelle page sur `main` et Pages ; recette navigateur à faire |
+| Configuration nouveau Supabase | **Aligné côté code** | `config.js` vise le projet exact avec clé publiable ; serveur actif, connectivité navigateur à vérifier |
+| Catégories libres et objectifs SMART | **Implémenté, non validé E2E** | `kyg_areas`, `kyg_goals` et formulaires dans `kyg-app.js` |
+| Agenda et cascade des tâches | **Implémenté, tests automatiques OK** | `kyg_actions.planned_for/due_date/goal_id/milestone_id` ; nouvelle UI semaine/mois |
+| Focus unique et coffre à idées | **Implémenté, recette nécessaire** | Sous-fonctions intégrées ; comportement réel Auth à vérifier |
+| Continuité GitHub/Supabase entre chats | **Partiel** | `START_HERE.md` actualisé ; dépend du connecteur et de la persistance des données |
+| Premier utilisateur et reprise des objectifs préexistants | **À faire** | Aucun compte Auth ; l'espace initial nécessite une liaison vérifiée au bon utilisateur |
+| Revue d'idées « dans 30 jours » | **À évaluer** | Amélioration utile de la PR #1, non transposée automatiquement, sans notifications imposées |
+
+### Risques, décisions et prochaine priorité
+
+**Le développement et le merge sont terminés pour cette validation exceptionnelle.** Aucun autre merge automatique n'est autorisé sans accord distinct.
+
+**Priorité unique du prochain checkpoint :** valider le parcours **création/connexion du compte Auth → association sécurisée de l'espace initial → lecture des objectifs → ajout/modification d'une tâche dans le calendrier**, puis corriger toute friction réellement constatée, sur PR et avec validation avant une nouvelle fusion.
