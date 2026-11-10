@@ -176,7 +176,7 @@ L'utilisateur doit pouvoir sélectionner **Calendrier** dans le menu de KeepYour
 
 **Cascade personnalisable et facultative :**
 - Le **volet** (`kyg_areas`) sert à filtrer les objectifs disponibles, y compris dans ses sous-volets.
-- L'utilisateur peut choisir un **objectif parent** (`kyg_goals.goal_id` dans la tâche), puis éventuellement un **jalon appartenant à cet objectif** (`kyg_actions.milestone_id`).
+- L'utilisateur peut choisir un **objectif parent** (`kyg_actions.goal_id`), puis éventuellement un **jalon appartenant à cet objectif** (`kyg_actions.milestone_id`).
 - Aucun lien n'est requis : une tâche peut être **indépendante** (`goal_id = null`, `milestone_id = null`). Choisir un volet uniquement pour filtrer ne signifie pas que l'action indépendante a été rattachée à ce volet : `kyg_actions` ne stocke pas aujourd'hui de `area_id`.
 - Le changement d'objectif réinitialise le jalon, et toute écriture est validée sur les identifiants appartenant au workspace courant. Les noms et catégories ne sont jamais codés en dur.
 
