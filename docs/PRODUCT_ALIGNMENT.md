@@ -122,3 +122,23 @@ Les prochains checkpoints sont ajoutés à la suite, en conservant l'historique.
 - **PR en attente :** la recherche des PR ouvertes via le connecteur n'a retourné aucun résultat ; cela ne prouve pas qu'aucune PR n'existe. Les branches `fix/auth-kyg-supabase-v2-20261104` et `refocus/maintenant-coffre-20261103` existent et doivent être examinées avant toute proposition de fusion. **Recommandation : REPORTER** toute intégration jusqu'à vérification du diff et des tests. Aucun merge effectué.
 - **Risques :** anciennes instructions de déploiement et scripts SQL historiques non compatibles avec la nouvelle base ; ne pas les exécuter en production. Aucune donnée personnelle modifiée.
 - **Priorité unique de la semaine suivante :** récupérer et examiner le frontend réel et les branches en cours, puis tester le parcours manuel minimal sur un environnement isolé avant d'ouvrir une PR ciblée.
+
+
+## Observation produit — 2026-11-10 : calendrier connecté aux objectifs
+
+**Besoin confirmé par l'utilisation de la passerelle ChatGPT :** une personne veut consulter **un agenda dans le menu** et y retrouver ses tâches, sans que chaque tâche doive nécessairement appartenir à un objectif. Lorsqu'un rattachement est souhaité, le formulaire doit respecter la hiérarchie personnalisable **volet (filtre) → objectif parent → jalon facultatif**. Ajouter des tâches doit rester une opération autonome dans l'application, sans changement de code ni appel à ChatGPT.
+
+**Décisions de produit :**
+- Vues **semaine** et **mois**, sélection d'un jour et ajout direct d'une tâche sur cette date.
+- Une seule table `kyg_actions` pour calendrier, focus et chemin stratégique ; `planned_for` = date de travail, `due_date` = échéance ; sans date, la tâche reste consultable.
+- Parent facultatif : tâche indépendante sans objectif ni jalon ; le volet ne joue qu'un rôle de filtre dans ce cas.
+- Changement d'objectif → remise à zéro du jalon ; validation des liens dans le frontend, en complément des clés étrangères Supabase.
+- Pas de récurrence, notifications systématiques ou créneaux horaires inventés. Une grille de créneaux pourrait être examinée dans un besoin ultérieur.
+
+**Réalisation préparée (NON fusionnée) :** [PR #2](https://github.com/ismaelfofana1998-cloud/keepyourgoals/pull/2), qui corrige également la connexion au nouveau projet Supabase. Écran Calendrier, cascade à trois niveaux, création/édition de tâches indépendantes ou liées, comportement mobile à défilement horizontal, et `docs/CALENDAR.md` sur la branche de PR. Aucune nouvelle table ou migration nécessaire.
+
+**Contrôles vérifiés :** GitHub Actions [run #42755647181](https://github.com/ismaelfofana1998-cloud/keepyourgoals/actions/runs/42755647181) **conclu avec succès** : syntaxe, smoke et tests de dates, filtres, cascade, actions sans parent et rendu du calendrier. **À vérifier encore :** navigation réelle dans un navigateur, inscription/connexion Auth, application des politiques RLS en situation réelle, création et modification dans le compte cible, interactions sur mobile.
+
+**Statut d'alignement :** `Partiel` (implémenté et testé dans une branche, non accessible sur le site publié). **Décision de merge : en attente de validation explicite de l'utilisateur.** Ne pas assimiler le succès CI à une autorisation de mise en ligne. Aucune donnée personnelle de production n'a été modifiée.
+
+**Prochaine priorité unique :** sécuriser le parcours connexion → rattachement du workspace → tests fonctionnels en navigateur, puis soumettre la PR et ses limites à décision de l'utilisateur au checkpoint.
