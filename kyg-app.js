@@ -14,6 +14,9 @@ const state = {
   actions: [],
   ideas: [],
   selectedGoalId: null,
+  calendarMode: "week",
+  calendarCursor: null,
+  selectedCalendarDate: null,
   view: "now",
   signup: false,
   busy: false,
@@ -44,6 +47,118 @@ function plusMonths(input, count) {
   const end = new Date(Date.UTC(y,m,0)).getUTCDate();
   return [y,String(m).padStart(2,"0"),String(Math.min(day,end)).padStart(2,"0")].join("-");
 }
+
+function dateAtUTC(iso) {
+  const [year,month,day] = String(iso).slice(0,10).split("-").map(Number);
+  return new Date(Date.UTC(year,month-1,day,12));
+}
+function addDaysISO(iso, delta) {
+  const day = dateAtUTC(iso);
+  day.setUTCDate(day.getUTCDate()+delta);
+  return day.toISOString().slice(0,10);
+}
+function mondayISO(iso) {
+  const offset = (dateAtUTC(iso).getUTCDay()+6)%7;
+  return addDaysISO(iso,-offset);
+}
+function calendarDates(mode, cursor) {
+  const anchor=cursor||todayLocal();
+  const first = mode==="month" ? mondayISO(anchor.slice(0,7)+"-01") : mondayISO(anchor);
+  const count = mode==="month" ? 42 : 7;
+  return Array.from({length:count},(_,i)=>addDaysISO(first,i));
+}
+function calendarPeriodLabel(mode,cursor) {
+  const anchor=cursor||todayLocal();
+  const format=(date,options)=>dateAtUTC(date).toLocaleDateString("fr-FR",{...options,timeZone:"UTC"});
+  if(mode==="month") return format(anchor,{month:"long",year:"numeric"});
+  const dates=calendarDates("week",anchor);
+  const first=dates[0],last=dates[6];
+  if(first.slice(0,7)===last.slice(0,7))
+    return shortDate(first).slice(0,2)+" – "+format(last,{day:"numeric",month:"long",year:"numeric"});
+  return format(first,{day:"numeric",month:"short",year:"numeric"})+" – "+format(last,{day:"numeric",month:"short",year:"numeric"});
+}
+function actionCalendarDay(action) {
+  // Explicit planned day takes precedence; due_date is a fallback for unscheduled tasks.
+  return action.planned_for || action.due_date || null;
+}
+function actionsOnCalendarDay(day) {
+  return state.actions.filter(a=>actionCalendarDay(a)===day && a.status!=="discarded")
+    .sort((a,b)=>Number(a.status==="done")-Number(b.status==="done") ||
+      (a.due_date||"9999-12-31").localeCompare(b.due_date||"9999-12-31") ||
+      (a.created_at||"").localeCompare(b.created_at||""));
+}
+function areaTrail(areaId) {
+  const parts=[],seen=new Set();
+  let current=state.areas.find(a=>a.id===areaId);
+  while(current && !seen.has(current.id)) {
+    parts.push(current.name);
+    seen.add(current.id);
+    current=state.areas.find(a=>a.id===current.parent_id);
+  }
+  return parts.reverse();
+}
+function actionTrail(action) {
+  const goal=state.goals.find(g=>g.id===action.goal_id);
+  if(!goal)return "Tâche indépendante";
+  const milestone=state.milestones.find(m=>m.id===action.milestone_id && m.goal_id===goal.id);
+  return [...areaTrail(goal.area_id),goal.title,...(milestone?[milestone.title]:[])].join(" › ");
+}
+function milestonesForGoal(goalId) {
+  return state.milestones.filter(m=>m.goal_id===goalId && m.status!=="cancelled")
+    .sort((a,b)=>a.horizon_months-b.horizon_months);
+}
+function renderCalendar() {
+  const mode=state.calendarMode;
+  const cursor=state.calendarCursor||todayLocal();
+  const selected=state.selectedCalendarDate||todayLocal();
+  const days=calendarDates(mode,cursor);
+  const today=todayLocal();
+  $("#calendar-period-label").textContent=calendarPeriodLabel(mode,cursor);
+  $("#calendar-weekdays").innerHTML=["Lun.","Mar.","Mer.","Jeu.","Ven.","Sam.","Dim."]
+    .map(day=>'<span>'+day+'</span>').join("");
+  $("[data-calendar-mode]").forEach(b=>{
+    const active=b.dataset.calendarMode===mode;
+    b.classList.toggle("active",active);
+    b.setAttribute("aria-pressed",String(active));
+  });
+  $("#calendar-grid").classList.toggle("month-view",mode==="month");
+  $("#calendar-grid").classList.toggle("week-view",mode==="week");
+  const monthPrefix=cursor.slice(0,7);
+  $("#calendar-grid").innerHTML=days.map(day=>{
+    const tasks=actionsOnCalendarDay(day);
+    const otherMonth=mode==="month" && !day.startsWith(monthPrefix);
+    const classes=["calendar-day",day===selected?"selected":"",day===today?"today":"",otherMonth?"outside-month":""].filter(Boolean).join(" ");
+    const dayLabel=dateAtUTC(day).toLocaleDateString("fr-FR",{timeZone:"UTC",day:"numeric"});
+    const visible=tasks.slice(0,mode==="week"?4:2);
+    return '<div class="'+classes+'" data-date="'+day+'">'+
+      '<button type="button" class="calendar-day-heading" data-calendar-day="'+day+'" aria-label="Sélectionner le '+day+'"><span>'+dayLabel+'</span><span class="calendar-day-count">'+(tasks.length?tasks.length:"")+'</span></button>'+
+      '<div class="calendar-task-chips">'+visible.map(a=>'<button type="button" class="calendar-chip'+(a.status==="done"?" done":"")+'" data-edit-action="'+esc(a.id)+'" title="'+esc(actionTrail(a))+'">'+esc(a.title)+'</button>').join("")+
+      (tasks.length>visible.length?'<button type="button" class="calendar-more" data-calendar-day="'+day+'">+'+(tasks.length-visible.length)+' autres</button>':"")+
+      '</div></div>';
+  }).join("");
+  $("#calendar-selected-label").textContent=dateAtUTC(selected).toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long",year:"numeric",timeZone:"UTC"});
+  const items=actionsOnCalendarDay(selected);
+  $("#calendar-selected-actions").innerHTML=items.length?items.map(a=>actionRow(a)).join(""):
+    '<p class="empty-state">Aucune tâche prévue pour ce jour. Vous pouvez en ajouter une sans la lier à un objectif.</p>';
+  const undated=state.actions.filter(a=>!actionCalendarDay(a) && a.status!=="discarded");
+  $("#calendar-undated-count").textContent=undated.length?"("+undated.length+")":"";
+  $("#calendar-undated-actions").innerHTML=undated.length?undated.map(a=>actionRow(a)).join(""):
+    '<p class="muted">Aucune tâche sans date.</p>';
+}
+function selectCalendarDay(day) {
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(day))return;
+  state.selectedCalendarDate=day;
+  state.calendarCursor=day;
+  renderCalendar();
+}
+function navigateCalendar(direction) {
+  const cursor=state.calendarCursor||todayLocal();
+  const day=state.calendarMode==="month"
+    ? plusMonths(cursor.slice(0,7)+"-01",direction)
+    : addDaysISO(cursor,direction*7);
+  selectCalendarDay(day);
+}
+
 function toast(message, error = false) {
   const region = $("#notifications");
   const el = document.createElement("div");
@@ -203,10 +318,11 @@ function selectOptions(selected, includeBlank=false) {
     treeOptions().map(a=>'<option value="'+esc(a.id)+'"'+(a.id===selected?' selected':'')+'>'+esc(a.name)+'</option>').join("");
 }
 function setView(view) {
-  if (!["now","path","ideas"].includes(view))return;
+  if (!["now","calendar","path","ideas"].includes(view))return;
   state.view=view;
-  for(const v of ["now","path","ideas"]) $("#screen-"+v).classList.toggle("hidden",v!==view);
-  $$("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===view));
+  for(const v of ["now","calendar","path","ideas"]) $("#screen-"+v).classList.toggle("hidden",v!==view);
+  $("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===view));
+  if(view==="calendar")renderCalendar();
   window.scrollTo({top:0,behavior:"smooth"});
 }
 function actionReady(a) {
@@ -238,10 +354,13 @@ function renderNow() {
   $("#other-actions-list").innerHTML=rest.length?rest.map(a=>actionRow(a)).join(""):'<p class="muted">Aucune autre action en attente.</p>';
 }
 function actionRow(a) {
-  const name=state.goals.find(g=>g.id===a.goal_id)?.title||"Sans objectif";
+  const path=actionTrail(a);
+  const schedule=a.planned_for?"Prévue le "+shortDate(a.planned_for):a.due_date?"Échéance le "+shortDate(a.due_date):"Sans date";
+  const due=a.due_date&&a.planned_for&&a.due_date!==a.planned_for?" · Échéance "+shortDate(a.due_date):"";
   return '<article class="action-item'+(a.status==="done"?" done":"")+'">'+
-    '<button type="button" class="icon-button" data-complete-action="'+esc(a.id)+'" aria-label="Marquer comme terminée">◯</button>'+
-    '<div><h3>'+esc(a.title)+'</h3><p>'+esc(name)+(a.due_date?" · "+shortDate(a.due_date):"")+'</p></div>'+
+    (a.status!=="done"?'<button type="button" class="icon-button" data-complete-action="'+esc(a.id)+'" aria-label="Marquer comme terminée">◯</button>':'<span class="action-done-icon" aria-label="Terminée">✓</span>')+
+    '<div class="action-item-body"><h3>'+esc(a.title)+'</h3><p title="'+esc(path)+'">'+esc(path)+'</p><p>'+esc(schedule+due)+' · '+statusLabel(a.status)+'</p></div>'+
+    '<button type="button" class="icon-button" data-edit-action="'+esc(a.id)+'" title="Modifier cette tâche" aria-label="Modifier la tâche">✎</button>'+
     (!a.is_focus&&actionReady(a)?'<button type="button" class="icon-button" data-focus-action="'+esc(a.id)+'" title="Choisir comme focus" aria-label="Choisir comme prochaine action">◎</button>':"")+
   '</article>';
 }
@@ -306,6 +425,7 @@ function renderDetail() {
 }
 function render() {
   renderNow();
+  renderCalendar();
   renderAreas();
   renderGoals();
   renderIdeas();
@@ -427,34 +547,90 @@ async function saveMilestone(form) {
   await reload();
   toast("Jalon enregistré.");
 }
-function openAction() {
-  if(!state.selectedGoalId)return;
-  $("#action-form").reset();
+function refreshActionMilestoneOptions(selectedId="") {
+  const goalId=$("#action-goal").value;
+  const select=$("#action-milestone");
+  const milestones=milestonesForGoal(goalId);
+  select.innerHTML='<option value="">Sans jalon</option>'+
+    milestones.map(m=>'<option value="'+esc(m.id)+'">'+esc(m.title)+' · '+m.horizon_months+' mois</option>').join("");
+  select.disabled=!goalId||!milestones.length;
+  select.value=milestones.some(m=>m.id===selectedId)?selectedId:"";
+  refreshActionBreadcrumb();
+}
+function refreshActionBreadcrumb() {
+  const goal=state.goals.find(g=>g.id===$("#action-goal").value);
+  const milestone=state.milestones.find(m=>m.id===$("#action-milestone").value && m.goal_id===goal?.id);
+  const trail=goal?[...areaTrail(goal.area_id),goal.title,...(milestone?[milestone.title]:[])]:["Tâche indépendante","Aucun objectif requis"];
+  $("#action-breadcrumb").textContent=trail.join(" › ");
+}
+function openAction({id=null,goalId=null,date=null}={}) {
+  const a=id?state.actions.find(x=>x.id===id):null;
+  if(id&&!a)return;
+  const form=$("#action-form");
+  form.reset();
+  $("#action-dialog-title").textContent=a?"Modifier une tâche":"Ajouter une tâche";
+  $("#action-id").value=a?.id||"";
+  $("#action-title").value=a?.title||"";
+  form.elements.details.value=a?.details||"";
+  $("#action-planned-for").value=a?.planned_for||date||"";
+  $("#action-due-date").value=a?.due_date||"";
+  form.elements.estimated_minutes.value=a?.estimated_minutes||"";
+  $("#action-status").value=a?.status==="backlog"?"backlog":a?.status==="in_progress"?"in_progress":a?.status==="done"?"done":"ready";
+  $("#action-focus").checked=Boolean(a?.is_focus);
+  const selectedGoal=a?.goal_id||goalId||"";
+  $("#action-goal").innerHTML='<option value="">Aucun — tâche indépendante</option>'+
+    state.goals.map(g=>'<option value="'+esc(g.id)+'">'+esc([...areaTrail(g.area_id),g.title].join(" › "))+(g.status!=="active"?" ("+statusLabel(g.status)+")":"")+'</option>').join("");
+  $("#action-goal").value=state.goals.some(g=>g.id===selectedGoal)?selectedGoal:"";
+  refreshActionMilestoneOptions(a?.milestone_id||"");
   openDialog("action-dialog");
 }
 async function clearFocus() {
   await unwrap(state.client.from("kyg_actions").update({is_focus:false,updated_at:new Date().toISOString()})
     .eq("workspace_id",state.workspace.id).eq("is_focus",true));
 }
+function actionFormPayload(values, focus) {
+  const goalId=values.goal_id||null;
+  const milestoneId=values.milestone_id||null;
+  const goal=goalId?state.goals.find(g=>g.id===goalId):null;
+  if(goalId&&!goal)throw new Error("L'objectif sélectionné n'existe plus dans cet espace.");
+  const milestone=milestoneId?state.milestones.find(m=>m.id===milestoneId && m.goal_id===goalId):null;
+  if(milestoneId&&!milestone)throw new Error("Le jalon sélectionné n'appartient pas à cet objectif.");
+  if(focus && values.status!=="ready" && values.status!=="in_progress")throw new Error("Seule une tâche à faire ou en cours peut être la priorité.");
+  if(focus && goal && goal.status!=="active")throw new Error("Activez l'objectif parent avant de définir une action prioritaire.");
+  if(values.planned_for&&!/^\d{4}-\d{2}-\d{2}$/.test(values.planned_for))throw new Error("Jour prévu invalide.");
+  return {
+    goal_id:goalId, milestone_id:milestoneId,
+    title:String(values.title||"").trim(),
+    details:values.details?.trim()||null,
+    planned_for:values.planned_for||null,
+    due_date:values.due_date||null,
+    estimated_minutes:values.estimated_minutes?Number(values.estimated_minutes):null,
+    status:values.status||"ready",
+    is_focus:focus
+  };
+}
 async function saveAction(form) {
   const v=Object.fromEntries(new FormData(form));
-  if(!state.selectedGoalId)return;
-  const data={
-    workspace_id:state.workspace.id,
-    goal_id:state.selectedGoalId,
-    title:String(v.title||"").trim(),
-    details:v.details?.trim()||null,
-    due_date:v.due_date||null,
-    estimated_minutes:v.estimated_minutes?Number(v.estimated_minutes):null,
-    status:"ready",
-    is_focus:form.elements.is_focus.checked
-  };
-  if(!data.title)return toast("Précisez l'action.",true);
-  if(data.is_focus) await clearFocus();
-  await unwrap(state.client.from("kyg_actions").insert(data));
+  const id=v.id||null;
+  const existing=id?state.actions.find(a=>a.id===id):null;
+  if(id&&!existing)throw new Error("Cette tâche n'est plus disponible.");
+  const data=actionFormPayload(v,form.elements.is_focus.checked);
+  if(!data.title)return toast("Précisez la tâche.",true);
+  const completedAt=data.status==="done"?existing?.completed_at||new Date().toISOString():null;
+  if(data.is_focus && !existing?.is_focus)await clearFocus();
+  if(id) {
+    await unwrap(state.client.from("kyg_actions").update({...data,completed_at:completedAt,updated_at:new Date().toISOString()})
+      .eq("id",id).eq("workspace_id",state.workspace.id));
+  } else {
+    await unwrap(state.client.from("kyg_actions").insert({...data,workspace_id:state.workspace.id,completed_at:completedAt}));
+  }
   closeDialog("action-dialog");
+  if(data.planned_for || data.due_date){
+    state.selectedCalendarDate=data.planned_for||data.due_date;
+    state.calendarCursor=state.selectedCalendarDate;
+  }
   await reload();
-  toast("Action enregistrée.");
+  toast(id?"Tâche mise à jour.":"Tâche ajoutée à votre espace.");
 }
 async function completeAction(id) {
   const a=state.actions.find(x=>x.id===id);
@@ -538,6 +714,18 @@ function bindEvents() {
     if(!el)return;
     if(el.dataset.view)return setView(el.dataset.view);
     if(el.id==="go-ideas")return setView("ideas");
+    if(el.id==="calendar-prev")return navigateCalendar(-1);
+    if(el.id==="calendar-next")return navigateCalendar(1);
+    if(el.id==="calendar-today")return selectCalendarDay(todayLocal());
+    if(el.dataset.calendarMode){
+      state.calendarMode=el.dataset.calendarMode;
+      return renderCalendar();
+    }
+    if(el.dataset.calendarDay)return selectCalendarDay(el.dataset.calendarDay);
+    if(el.id==="calendar-add-action"||el.id==="calendar-add-selected")
+      return openAction({date:state.selectedCalendarDate||todayLocal()});
+    if(el.dataset.editAction)return openAction({id:el.dataset.editAction});
+
     if(el.id==="new-area")return openArea();
     if(el.id==="new-goal")return openGoal();
     if(el.dataset.addSubarea)return openArea(null,el.dataset.addSubarea);
@@ -550,14 +738,16 @@ function bindEvents() {
     if(el.dataset.close)return closeDialog(el.dataset.close);
     if(el.id==="edit-selected-goal"){closeDialog("goal-detail-dialog");return openGoal(state.selectedGoalId);}
     if(el.id==="add-milestone")return openMilestone();
-    if(el.id==="add-action")return openAction();
+    if(el.id==="add-action")return openAction({goalId:state.selectedGoalId});
   }));
   $("#area-form").addEventListener("submit",withError(async e=>{e.preventDefault();await saveArea(e.currentTarget);}));
   $("#goal-form").addEventListener("submit",withError(async e=>{e.preventDefault();await saveGoal(e.currentTarget);}));
   $("#milestone-form").addEventListener("submit",withError(async e=>{e.preventDefault();await saveMilestone(e.currentTarget);}));
   $("#action-form").addEventListener("submit",withError(async e=>{e.preventDefault();await saveAction(e.currentTarget);}));
   $("#idea-form").addEventListener("submit",withError(async e=>{e.preventDefault();await saveIdea(e.currentTarget);}));
-  $("#milestone-horizon").addEventListener("change",()=>{
+  $("#action-goal").addEventListener("change",()=>refreshActionMilestoneOptions());
+  $("#action-milestone").addEventListener("change",refreshActionBreadcrumb);
+    $("#milestone-horizon").addEventListener("change",()=>{
     const g=state.goals.find(x=>x.id===state.selectedGoalId);
     if(g && !$("#milestone-id").value)$("#milestone-date").value=plusMonths(g.start_date,$("#milestone-horizon").value);
   });
