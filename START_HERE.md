@@ -1,5 +1,13 @@
 # START HERE — Initialisation portable KeepYourGoals
 
+## État de publication — 10 novembre 2026
+
+- **Frontend autonome sur `main` :** PR #2 fusionnée après accord de l'utilisateur, avec correction du projet Supabase, gestion des objectifs, calendrier semaine/mois et tâches en cascade.
+- **Site GitHub Pages publié :** https://ismaelfofana1998-cloud.github.io/keepyourgoals/ (déploiement GitHub Actions confirmé).
+- **PR #1 ancien prototype :** clôturée sans merge, fonctionnalité de réexamen d'idées à reprendre séparément si utile.
+- **Recette restante :** inscription/authentification dans le bon projet Supabase, vérification des autorisations, puis association contrôlée de l'espace initial déjà rempli. **Ne jamais attribuer automatiquement les données d'un workspace non propriétaire à un nouvel inscrit.**
+- **Statut :** tests CI et publication réussis, **parcours utilisateur avec données privées non encore testé**. Le site Vercel historiquement affiché sur GitHub n'a pas été vérifié ; utiliser GitHub Pages pour tester la version fusionnée.
+
 **Fichier d'entrée de référence pour toute nouvelle conversation ChatGPT.** Il suffit d'envoyer ce message dans un autre chat :
 
 > Initialise KeepYourGoals à partir de https://github.com/ismaelfofana1998-cloud/keepyourgoals/blob/main/START_HERE.md et reprends mon organisation depuis les données Supabase. Tu es mon frontend intelligent personnel. Lis les règles canoniques et l'état réel avant de répondre.
@@ -67,7 +75,7 @@ Avant de conclure une conversation importante, mettre à jour les données durab
 - **Si l'utilisateur ne formule pas encore de demande particulière** : reprendre silencieusement les sources, puis confirmer en **trois ou quatre phrases** les éléments réellement retrouvés (workspace et nombre d'objectifs actifs / brouillons, éventuel focus, point bloquant actuel). Ne pas réciter toutes les catégories, tâches et idées.
 - **S'il formule une demande** : la traiter directement avec les données retrouvées. Ne pas répéter inutilement l'architecture.
 - **Si une connexion est inaccessible** : expliquer clairement laquelle (GitHub ou Supabase), conserver les identifiants ci-dessus pour éviter de redemander leur nom, et demander uniquement la reconnexion utile. Ne pas prétendre avoir reconstitué toute la mémoire.
-- Ne jamais utiliser le dépôt GitHub comme banque de données personnelles, ni confondre le frontend historique avec l'application autonome à construire.
+- Ne jamais utiliser le dépôt GitHub comme banque de données personnelles. Le frontend autonome est désormais sur `main` et GitHub Pages ; les anciens fichiers `app.js` / `styles.css` décrivent l'ancienne application, **pas** la page active. Les comptes Auth et l'accès au workspace préexistant restent à vérifier.
 - Priorité : réduire la charge mentale de l'utilisateur, pas le forcer à administrer l'outil.
 
 ### E. Références stables
