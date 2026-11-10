@@ -1,17 +1,17 @@
 # KeepYourGoals — Application autonome de pilotage d'objectifs
 
-## Version proposée — accès à l'application autonome
+## Version intégrée — application autonome sur GitHub Pages
 
-La branche `fix/auth-kyg-supabase-v2-20261104` remplace l'ancienne interface IKIGAI Pilot 3.0 par une interface KeepYourGoals **sans IA** connectée au nouveau projet `mzxgpdwjklvoqsjclrtz`. Elle corrige la source d'une erreur de connexion `Failed to fetch` : URL Supabase historique incompatible et chargement d'anciennes tables.
+La [PR #2](https://github.com/ismaelfofana1998-cloud/keepyourgoals/pull/2), **fusionnée sur `main` le 10/11/2026** (commit `30d5f87`), remplace l'ancienne interface par KeepYourGoals **sans API d'IA obligatoire**, connectée au projet Supabase `mzxgpdwjklvoqsjclrtz`. Elle corrige l'ancienne configuration à l'origine d'une incompatibilité de connexion et de chargement.
 
-**Cette branche reste en PR jusqu'à validation expresse : ne pas merger, déployer ou annoncer qu'elle est déjà publique.**
+**Site GitHub Pages :** https://ismaelfofana1998-cloud.github.io/keepyourgoals/ — [déploiement confirmé par GitHub Actions](https://github.com/ismaelfofana1998-cloud/keepyourgoals/actions/runs/42756614423). Le navigateur avec compte Auth n'est **pas encore testé** ; le site Vercel indiqué historiquement dans le profil GitHub n'a pas été vérifié.
 
 - Connexion/création de compte Supabase Auth, redirection de confirmation d'e-mail.
 - Volets et sous-volets dynamiques, objectifs SMART, jalons flexibles, actions et coffre à idées.
 - **Calendrier semaine/mois**, accessible par le menu : tâches datées, ajout depuis un jour, modification, rattachement facultatif **volet (filtre) → objectif → jalon** ou tâche indépendante. Aucun changement de base de données requis. [Spécification et tests du calendrier](docs/CALENDAR.md).
 - Une seule prochaine action visible par défaut.
 - [Guide d'accès et de reprise des objectifs existants](docs/APP_ACCESS.md).
-- Tests statiques proposés : `node --check kyg-app.js`, `node tests/smoke.mjs` et `node tests/calendar.mjs`. Auth navigateur et liaison de compte à tester après mise en ligne approuvée.
+- Tests CI **réussis** : `node --check kyg-app.js`, `node tests/smoke.mjs` et `node tests/calendar.mjs` ([run #42756523570](https://github.com/ismaelfofana1998-cloud/keepyourgoals/actions/runs/42756523570)). Auth en navigateur et liaison de compte à tester avant validation fonctionnelle complète.
 - L'espace initial prérempli dans Supabase n'est rattaché à **aucun utilisateur Auth**. L'association aux objectifs préexistants doit se faire uniquement après vérification de l'identité du compte créé. Il ne faut jamais le faire réclamer automatiquement au premier inscrit.
 
 ## Reprendre dans n'importe quelle conversation — point d'entrée unique
@@ -41,17 +41,17 @@ KeepYourGoals est destiné à fonctionner **indépendamment de ChatGPT et sans m
 
 **Développement autonome, intégration sous validation humaine.** Chaque semaine, le développeur peut coder, tester et préparer des **pull requests**, mais **ne fusionne jamais de code applicatif sur `main`, et ne déploie pas de nouvelle version sans accord explicite**. L'utilisateur n'a rien à piloter entre les revues ; à chaque checkpoint, il reçoit le bilan de la semaine, les tests effectués, les PR prêtes et une recommandation **MERGER / REPORTER / NE PAS MERGER**, puis décide. L'existence d'une PR ou d'une automatisation n'autorise pas le merge. Les fichiers de documentation du checkpoint peuvent être actualisés directement sur `main`.
 
-## Checkpoint d'alignement courant — 09/11/2026
+## Checkpoint d'alignement courant — 10/11/2026
 
-**Apprentissage :** un objectif doit rester accessible sans cadence ni rappel obligatoire. La reprise portable reste fondée sur `START_HERE.md` et la mémoire privée Supabase, sans publication de données personnelles.
+**Vision confirmée :** interface indépendante de ChatGPT, volets et objectifs personnalisables, une seule prochaine action mise en avant, et **Calendrier semaine/mois** avec création de tâches indépendantes ou rattachées à une cascade volet → objectif → jalon.
 
-**État vérifié :** huit tables `kyg_*` présentes dans Supabase, mais parcours autonome complet non démontré ; les fichiers applicatifs principaux n'ont pas pu être récupérés par le connecteur. Aucun test applicatif ou E2E n'a été exécuté et aucune nouvelle PR applicative n'a été ouverte.
+**Livré et vérifié :** la [PR #2](https://github.com/ismaelfofana1998-cloud/keepyourgoals/pull/2) a été **MERGÉE après accord explicite** (commit `30d5f87`) : connexion au bon projet Supabase, frontend autonome et calendrier. [CI réussie](https://github.com/ismaelfofana1998-cloud/keepyourgoals/actions/runs/42756523570) et [déploiement GitHub Pages réussi](https://github.com/ismaelfofana1998-cloud/keepyourgoals/actions/runs/42756614423). La [PR #1](https://github.com/ismaelfofana1998-cloud/keepyourgoals/pull/1) a été **clôturée SANS MERGE**, devenue obsolète et incompatible avec le nouveau schéma.
 
-**Gouvernance :** aucun merge ni déploiement. Les branches de développement existantes doivent être examinées et testées avant toute décision ; recommandation actuelle **REPORTER**.
+**Écart restant :** authentification et CRUD en navigateur non testés de bout en bout. Aucun compte Supabase Auth n'existe encore dans ce projet et l'espace initial avec les objectifs n'est pas rattaché ; il faudra créer le compte puis procéder à une liaison vérifiée. [Consignes de première connexion](docs/APP_ACCESS.md).
 
-**Priorité suivante :** vérifier le frontend et ses branches, puis tester un parcours manuel minimal sans IA payante.
+**Prochaine priorité unique :** tester le parcours réel inscription/connexion → rattachement du workspace → affichage des objectifs et création/édition d'une tâche depuis le calendrier. Ne pas réintroduire l'ancien frontend. Pour les PR futures, conserver l'approbation explicite avant chaque merge.
 
-**Détail :** [checkpoint hebdomadaire du 09/11/2026](docs/PRODUCT_ALIGNMENT.md#checkpoint-hebdomadaire--2026-11-09-semaine-du-02-au-09-novembre).
+**Détail :** [checkpoint spécial du 10/11/2026](docs/PRODUCT_ALIGNMENT.md#checkpoint-exceptionnel--2026-11-10-validation-et-fusion).
 
 ## Ancien prototype — archive fonctionnelle (non alignée avec la nouvelle base)
 
