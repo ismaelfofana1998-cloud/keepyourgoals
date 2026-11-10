@@ -1,12 +1,17 @@
 {
-  "name": "IKIGAI Pilot",
-  "short_name": "IKIGAI",
-  "description": "Clarifier ce qui compte et avancer une action à la fois.",
+  "name": "KeepYourGoals",
+  "short_name": "KYG",
+  "description": "Une boussole personnelle : objectifs, jalons et une prochaine action.",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#F6F5F1",
-  "theme_color": "#F6F5F1",
+  "background_color": "#F7F6F2",
+  "theme_color": "#F7F6F2",
   "icons": [
-    {"src":"./assets/app-icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+    {
+      "src": "./assets/app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
   ]
 }
