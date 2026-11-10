@@ -22,12 +22,12 @@ const mockDocument={
   querySelector:element,
   querySelectorAll(){return [];}
 };
-const context={window:{APP_CONFIG:{}},document:mockDocument,console,Date,Intl};
+const context={window:{APP_CONFIG:{},scrollTo(){}},document:mockDocument,console,Date,Intl};
 const functions=vm.runInNewContext(noBootstrap+
   '\n({ state, addDaysISO, mondayISO, calendarDates, calendarPeriodLabel,'+
   ' actionCalendarDay, actionsOnCalendarDay, actionFormPayload, areaTrail, actionTrail,'+
   ' goalsForArea, milestonesForGoal, refreshActionGoalOptions, renderCalendar,'+
-  ' selectCalendarDay, navigateCalendar })',context);
+  ' selectCalendarDay, navigateCalendar, setView })',context);
 
 assert.equal(functions.mondayISO('2026-11-10'),'2026-11-09','Monday week start');
 assert.equal(functions.addDaysISO('2026-12-31',1),'2027-01-01','Year rollover');
@@ -111,4 +111,6 @@ assert.equal(st.selectedCalendarDate,'2026-11-19');
 st.calendarMode='month';
 functions.renderCalendar();
 assert.equal((element('#calendar-grid').innerHTML.match(/<div class="calendar-day(?: |")/g)||[]).length,42);
+functions.setView('calendar');
+assert.equal(st.view,'calendar','Calendar must open from navigation');
 console.log('Calendrier OK — navigation, dates, 3 niveaux de cascade, tâches indépendantes et affichage partagé.');
