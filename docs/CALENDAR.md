@@ -46,7 +46,7 @@ Le jour de classement de la tâche est **`planned_for` si renseigné, sinon `due
 
 ## Déploiement et tests
 
-Le calendrier est préparé dans la branche de la **PR #2** (correction d'authentification et nouvel écran indépendant), non fusionnée. Il ne faut **ni merger ni déployer sans l'accord explicite de l'utilisateur**.
+Le calendrier est intégré à `main` par la **[PR #2](https://github.com/ismaelfofana1998-cloud/keepyourgoals/pull/2)**, fusionnée le 10/11/2026 avec l'accord explicite de l'utilisateur (commit `30d5f87`). **Déploiement GitHub Pages réussi** sur https://ismaelfofana1998-cloud.github.io/keepyourgoals/ ; les futures PR nécessitent toujours un accord de merge distinct.
 
 Vérifications prévues par CI :
 - `node --check kyg-app.js`
@@ -55,4 +55,4 @@ Vérifications prévues par CI :
 
 Les tests du calendrier couvrent les lundis, passages d'année et heure d'été, jours planifiés vs échéances, création indépendante, rattachement à un objectif et à un jalon valide, rejet des jalons d'un autre objectif, filtres de volets, affichage des tâches et navigation semaine/mois.
 
-**Restant à vérifier sur un navigateur connecté :** inscription/connexion au nouveau projet Supabase, autorisations RLS, création et modification réelle d'une tâche indépendante et liée à un jalon, fonctionnement mobile. Le site principal n'est pas corrigé avant la fusion approuvée de la PR #2. Pour retrouver les objectifs déjà saisis via ChatGPT, il faudra rattacher l'espace Supabase initial au compte Auth vérifié, selon `docs/APP_ACCESS.md`.
+**Restant à vérifier sur un navigateur connecté :** inscription/connexion au nouveau projet Supabase, autorisations RLS, création et modification réelle d'une tâche indépendante et liée à un jalon, fonctionnement mobile. La publication de l'interface ne constitue pas une preuve de ces parcours. Pour retrouver les objectifs déjà saisis via ChatGPT, il faudra rattacher l'espace Supabase initial au compte Auth vérifié, selon `docs/APP_ACCESS.md`.
