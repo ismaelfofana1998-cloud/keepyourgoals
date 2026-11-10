@@ -59,6 +59,7 @@
         <div class="sidebar-caption">MON ESPACE</div>
         <nav class="nav">
           <button class="nav-item active" type="button" data-view="now"><span>◎</span> Maintenant</button>
+          <button class="nav-item" type="button" data-view="calendar"><span>▦</span> Calendrier</button>
           <button class="nav-item" type="button" data-view="path"><span>◇</span> Mon chemin</button>
           <button class="nav-item" type="button" data-view="ideas"><span>✧</span> Coffre à idées</button>
         </nav>
@@ -83,6 +84,51 @@
             <div id="other-actions-list" class="action-list"></div>
           </details>
           <div class="small-nudge"><span>✧</span><p>Une idée vous traverse l'esprit ? <button type="button" id="go-ideas" class="inline-link">Déposez-la dans le coffre.</button> Elle n'a pas besoin de devenir un projet.</p></div>
+        </section>
+
+        <section id="screen-calendar" class="screen hidden" aria-labelledby="calendar-title">
+          <div class="page-heading heading-with-cta">
+            <div>
+              <span class="eyebrow">PLANIFICATION SOUPLE</span>
+              <h1 id="calendar-title">Mon calendrier</h1>
+              <p class="muted">Vos tâches, avec ou sans objectif parent. Rien ne devient une obligation quotidienne.</p>
+            </div>
+            <button id="calendar-add-action" type="button" class="button primary">+ Ajouter une tâche</button>
+          </div>
+
+          <div class="calendar-panel">
+            <div class="calendar-toolbar">
+              <div class="calendar-period">
+                <h2 id="calendar-period-label" aria-live="polite">Cette semaine</h2>
+                <button id="calendar-today" type="button" class="button secondary small">Aujourd'hui</button>
+              </div>
+              <div class="calendar-controls">
+                <div class="calendar-mode" role="group" aria-label="Affichage du calendrier">
+                  <button type="button" class="calendar-mode-button active" data-calendar-mode="week" aria-pressed="true">Semaine</button>
+                  <button type="button" class="calendar-mode-button" data-calendar-mode="month" aria-pressed="false">Mois</button>
+                </div>
+                <div class="calendar-arrows" role="group" aria-label="Changer de période">
+                  <button id="calendar-prev" type="button" aria-label="Période précédente" title="Période précédente">‹</button>
+                  <button id="calendar-next" type="button" aria-label="Période suivante" title="Période suivante">›</button>
+                </div>
+              </div>
+            </div>
+            <div id="calendar-weekdays" class="calendar-weekdays" aria-hidden="true"></div>
+            <div id="calendar-grid" class="calendar-grid" aria-label="Tâches par jour"></div>
+          </div>
+
+          <div class="calendar-day-panel">
+            <div class="section-head">
+              <div><span class="eyebrow">JOUR SÉLECTIONNÉ</span><h2 id="calendar-selected-label">Aujourd'hui</h2></div>
+              <button id="calendar-add-selected" type="button" class="button secondary small">+ Tâche ce jour</button>
+            </div>
+            <div id="calendar-selected-actions" class="action-list"></div>
+          </div>
+
+          <details class="quiet-details calendar-unscheduled">
+            <summary>Voir les tâches sans date <span id="calendar-undated-count"></span></summary>
+            <div id="calendar-undated-actions" class="action-list"></div>
+          </details>
         </section>
 
         <section id="screen-path" class="screen hidden">
@@ -111,6 +157,7 @@
 
     <nav class="mobile-nav" aria-label="Navigation principale">
       <button type="button" data-view="now" class="active"><span>◎</span>Maintenant</button>
+      <button type="button" data-view="calendar"><span>▦</span>Calendrier</button>
       <button type="button" data-view="path"><span>◇</span>Mon chemin</button>
       <button type="button" data-view="ideas"><span>✧</span>Mes idées</button>
     </nav>
@@ -169,13 +216,32 @@
 
   <dialog id="action-dialog" class="modal">
     <form id="action-form" class="modal-content">
-      <div class="modal-heading"><h2>Nouvelle action</h2><button class="close-dialog" type="button" data-close="action-dialog" aria-label="Fermer">×</button></div>
-      <label>Que faut-il faire ?<input name="title" required maxlength="180" placeholder="Une petite action réalisable"></label>
+      <div class="modal-heading"><h2 id="action-dialog-title">Ajouter une tâche</h2><button class="close-dialog" type="button" data-close="action-dialog" aria-label="Fermer">×</button></div>
+      <input id="action-id" type="hidden" name="id">
+      <label>Quelle tâche ?<input id="action-title" name="title" required maxlength="180" placeholder="Une action concrète et réalisable"></label>
+      <label>Objectif parent <span class="hint">(facultatif)</span>
+        <select id="action-goal" name="goal_id"><option value="">Aucun — tâche indépendante</option></select>
+      </label>
+      <label>Jalon parent <span class="hint">(facultatif, selon l'objectif)</span>
+        <select id="action-milestone" name="milestone_id" disabled><option value="">Sans jalon</option></select>
+      </label>
+      <p id="action-breadcrumb" class="action-breadcrumb">Tâche indépendante · Aucun objectif requis</p>
       <label>Précisions<textarea name="details" rows="2" placeholder="Facultatif"></textarea></label>
-      <label>Échéance <span class="hint">(optionnelle)</span><input name="due_date" type="date"></label>
-      <label>Durée estimée, en minutes <span class="hint">(optionnelle)</span><input name="estimated_minutes" type="number" min="5" max="480" step="5"></label>
-      <label class="check-label"><input type="checkbox" name="is_focus"> En faire ma prochaine action principale</label>
-      <div class="dialog-actions"><button type="button" class="button subtle" data-close="action-dialog">Annuler</button><button type="submit" class="button primary">Ajouter l'action</button></div>
+      <div class="form-grid">
+        <label>Jour prévu <span class="hint">(facultatif)</span><input id="action-planned-for" name="planned_for" type="date"></label>
+        <label>Échéance <span class="hint">(facultative)</span><input id="action-due-date" name="due_date" type="date"></label>
+      </div>
+      <div class="form-grid">
+        <label>Durée estimée, en minutes <span class="hint">(facultative)</span><input name="estimated_minutes" type="number" min="5" max="480" step="5"></label>
+        <label>État<select id="action-status" name="status">
+          <option value="ready">À faire</option>
+          <option value="in_progress">En cours</option>
+          <option value="backlog">Plus tard</option>
+          <option value="done">Terminée</option>
+        </select></label>
+      </div>
+      <label class="check-label"><input id="action-focus" type="checkbox" name="is_focus"> En faire ma prochaine action principale</label>
+      <div class="dialog-actions"><button type="button" class="button subtle" data-close="action-dialog">Annuler</button><button id="save-action" type="submit" class="button primary">Enregistrer la tâche</button></div>
     </form>
   </dialog>
 </body>
