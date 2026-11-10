@@ -391,7 +391,7 @@ function renderGoals() {
   }).join(""):'<p class="empty-state">Aucun objectif. Vous pouvez en créer un sans vous engager à le réaliser immédiatement.</p>';
 }
 function statusLabel(status) {
-  return ({draft:"Brouillon",active:"Actif",paused:"En pause",achieved:"Atteint",archived:"Archivé",proposed:"Proposé",planned:"Planifié",reached:"Atteint",missed:"À revoir",cancelled:"Annulé",ready:"À faire",in_progress:"En cours",done:"Terminé"})[status]||status;
+  return ({draft:"Brouillon",active:"Actif",paused:"En pause",achieved:"Atteint",archived:"Archivé",proposed:"Proposé",planned:"Planifié",reached:"Atteint",missed:"À revoir",cancelled:"Annulé",backlog:"Plus tard",ready:"À faire",in_progress:"En cours",done:"Terminé"})[status]||status;
 }
 function renderIdeas() {
   $("#idea-area").innerHTML=selectOptions("",true);
@@ -761,6 +761,9 @@ function bindEvents() {
   $("#action-area-filter").addEventListener("change",()=>refreshActionGoalOptions());
   $("#action-goal").addEventListener("change",()=>refreshActionMilestoneOptions());
   $("#action-milestone").addEventListener("change",refreshActionBreadcrumb);
+  $("#action-status").addEventListener("change",()=>{
+    if(!["ready","in_progress"].includes($("#action-status").value))$("#action-focus").checked=false;
+  });
     $("#milestone-horizon").addEventListener("change",()=>{
     const g=state.goals.find(x=>x.id===state.selectedGoalId);
     if(g && !$("#milestone-id").value)$("#milestone-date").value=plusMonths(g.start_date,$("#milestone-horizon").value);
