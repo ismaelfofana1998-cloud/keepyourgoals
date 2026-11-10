@@ -4,7 +4,7 @@
 
 Le `config.js` de la branche principale visait le projet Supabase historique `nyjgrpmpxajlgknlxykm`. L'application historique consommait `tenants`, `tenant_members`, `domains`, `objectives` et `actions`, alors que le modèle canonique actuel et les objectifs réels sont dans **`mzxgpdwjklvoqsjclrtz`**, tables `kyg_*`.
 
-Changer uniquement la clé et l'URL du vieux frontend aurait rendu la connexion vers le bon projet possible sans résoudre le chargement (tables absentes, ancien RPC `bootstrap_personal_tenant`, schéma non compatible). Cette branche remplace donc l'entrée `index.html` par une interface indépendante compatible `kyg_*`, sans IA et sans schéma ancien.
+Changer uniquement la clé et l'URL du vieux frontend aurait rendu la connexion vers le bon projet possible sans résoudre le chargement (tables absentes, ancien RPC `bootstrap_personal_tenant`, schéma non compatible). La [PR #2](https://github.com/ismaelfofana1998-cloud/keepyourgoals/pull/2), fusionnée le 10/11/2026, a remplacé l'entrée `index.html` sur `main` par une interface indépendante compatible `kyg_*`, sans API d'IA obligatoire.
 
 Le projet cible a été vérifié `ACTIVE_HEALTHY` dans Supabase au moment du diagnostic. Cette confirmation n'est pas un test de réseau du navigateur de l'utilisateur. Si l'erreur persiste sur la nouvelle page, vérifier la requête `/auth/v1/token` dans les outils réseau et ses erreurs DNS, blocage d'extension ou CORS. Le formulaire affiche désormais un message explicite en cas de défaut réseau.
 
@@ -21,20 +21,20 @@ Le projet cible a été vérifié `ACTIVE_HEALTHY` dans Supabase au moment du di
 
 ## Première connexion : IMPORTANT
 
-**Aucun utilisateur Auth n'avait encore été créé dans le nouveau projet au moment du diagnostic.** Un ancien identifiant/mot de passe Supabase ne crée pas automatiquement un utilisateur dans le nouveau projet. Après validation et mise en ligne de cette PR :
+**Aucun utilisateur Auth n'avait encore été créé dans le nouveau projet au moment du diagnostic.** Un ancien identifiant/mot de passe Supabase ne crée pas automatiquement un utilisateur dans le nouveau projet. Après le déploiement GitHub Pages confirmé le 10/11/2026 :
 
-1. Ouvrir l'URL HTTPS **effectivement publiée** de KeepYourGoals (vérifier la configuration GitHub Pages).
+1. Ouvrir le site **[KeepYourGoals sur GitHub Pages](https://ismaelfofana1998-cloud.github.io/keepyourgoals/)** (URL confirmée dans le journal de déploiement GitHub). Le site Vercel du dépôt n'a pas pu être vérifié.
 2. Choisir **Créer un compte**, renseigner son e-mail et un mot de passe personnel. Ne jamais communiquer le mot de passe à l'assistant.
 3. Si demandé, confirmer l'adresse e-mail (configuration `Authentication → URL Configuration` sur `mzxgpdwjklvoqsjclrtz` : définir `Site URL` et ajouter l'URL exacte publiée aux `Redirect URLs` autorisées ; sinon le lien peut rediriger vers un localhost inadéquat).
 4. Se connecter. L'application doit charger ou créer un espace **privé**.
 5. Pour récupérer les objectifs ajoutés dans l'espace initial par ChatGPT avant création de compte, **demander explicitement dans le chat une liaison de cet espace au compte nouvellement vérifié**. Le connecteur admin doit vérifier l'identité et l'identifiant Auth réel avant de renseigner `kyg_workspaces.owner_user_id`. Ne pas attribuer l'espace source à n'importe quel nouvel inscrit, ni recopier les objectifs vers un autre compte sans vérification.
 6. Une fois le rattachement vérifié, recharger la page. Le frontend choisit le plus ancien espace appartenant à ce compte, ce qui permet de réutiliser les objectifs et jalons déjà stockés. Le nouvel espace vide peut être conservé temporairement sans problème.
 
-**Cette PR ne fusionne pas automatiquement et n'est pas déployée.** L'utilisateur valide au checkpoint (ou explicitement dans le chat) la décision de merge. Un test d'authentification end-to-end nécessitera ensuite un compte utilisateur réel, une URL publiée et la confirmation d'e-mail.
+**PR #2 fusionnée avec l'accord explicite de l'utilisateur le 10/11/2026**, commit `30d5f87`. **GitHub Pages a publié ce commit avec succès**. Le parcours d'authentification end-to-end nécessite encore un compte utilisateur réel et, selon la configuration, la confirmation d'e-mail.
 
 ## Contrôles et limitations
 
 - Les tests statiques sont dans `tests/smoke.mjs`, exécutables avec `node --check kyg-app.js && node tests/smoke.mjs`.
-- Tests navigateur réels, inscription, vérification d'e-mail et RLS multi-comptes : **non encore exécutés** par cette préparation.
+- Tests navigateur réels, inscription, vérification d'e-mail et RLS multi-comptes : **non encore exécutés**, même si les contrôles CI et le déploiement Pages ont réussi.
 - La création d'un compte avec espace vide ne prouve pas encore l'accès aux données préexistantes : l'association de l'espace initial nécessite une opération d'administration contrôlée.
 - Le module d'édition des objectifs reste volontairement minimal. Les évolutions produit feront l'objet des checkpoints hebdomadaires, en PR non fusionnée jusqu'à décision.
