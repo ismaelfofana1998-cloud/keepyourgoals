@@ -547,6 +547,17 @@ async function saveMilestone(form) {
   await reload();
   toast("Jalon enregistré.");
 }
+function goalsForArea(areaId) {
+  return !areaId ? state.goals :
+    state.goals.filter(g=>g.area_id===areaId || isDescendantOf(g.area_id,areaId));
+}
+function refreshActionGoalOptions(selectedId="") {
+  const goals=goalsForArea($("#action-area-filter").value);
+  $("#action-goal").innerHTML='<option value="">Aucun — tâche indépendante</option>'+
+    goals.map(g=>'<option value="'+esc(g.id)+'">'+esc([...areaTrail(g.area_id),g.title].join(" › "))+(g.status!=="active"?" ("+statusLabel(g.status)+")":"")+'</option>').join("");
+  $("#action-goal").value=goals.some(g=>g.id===selectedId)?selectedId:"";
+  refreshActionMilestoneOptions();
+}
 function refreshActionMilestoneOptions(selectedId="") {
   const goalId=$("#action-goal").value;
   const select=$("#action-milestone");
@@ -578,9 +589,11 @@ function openAction({id=null,goalId=null,date=null}={}) {
   $("#action-status").value=a?.status==="backlog"?"backlog":a?.status==="in_progress"?"in_progress":a?.status==="done"?"done":"ready";
   $("#action-focus").checked=Boolean(a?.is_focus);
   const selectedGoal=a?.goal_id||goalId||"";
-  $("#action-goal").innerHTML='<option value="">Aucun — tâche indépendante</option>'+
-    state.goals.map(g=>'<option value="'+esc(g.id)+'">'+esc([...areaTrail(g.area_id),g.title].join(" › "))+(g.status!=="active"?" ("+statusLabel(g.status)+")":"")+'</option>').join("");
-  $("#action-goal").value=state.goals.some(g=>g.id===selectedGoal)?selectedGoal:"";
+  const goal=state.goals.find(g=>g.id===selectedGoal);
+  $("#action-area-filter").innerHTML='<option value="">Tous les volets</option>'+
+    treeOptions().map(a=>'<option value="'+esc(a.id)+'">'+esc(a.name)+'</option>').join("");
+  $("#action-area-filter").value=goal?.area_id||"";
+  refreshActionGoalOptions(selectedGoal);
   refreshActionMilestoneOptions(a?.milestone_id||"");
   openDialog("action-dialog");
 }
@@ -745,6 +758,7 @@ function bindEvents() {
   $("#milestone-form").addEventListener("submit",withError(async e=>{e.preventDefault();await saveMilestone(e.currentTarget);}));
   $("#action-form").addEventListener("submit",withError(async e=>{e.preventDefault();await saveAction(e.currentTarget);}));
   $("#idea-form").addEventListener("submit",withError(async e=>{e.preventDefault();await saveIdea(e.currentTarget);}));
+  $("#action-area-filter").addEventListener("change",()=>refreshActionGoalOptions());
   $("#action-goal").addEventListener("change",()=>refreshActionMilestoneOptions());
   $("#action-milestone").addEventListener("change",refreshActionBreadcrumb);
     $("#milestone-horizon").addEventListener("change",()=>{
