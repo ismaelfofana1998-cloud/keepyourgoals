@@ -9,6 +9,7 @@ on:
       - 'kyg.css'
       - 'manifest.webmanifest'
       - 'tests/smoke.mjs'
+      - 'tests/calendar.mjs'
       - '.github/workflows/kyg-ci.yml'
   workflow_dispatch:
 
@@ -28,3 +29,5 @@ jobs:
         run: node --check kyg-app.js
       - name: Static integration smoke
         run: node tests/smoke.mjs
+      - name: Calendar behavior tests
+        run: node tests/calendar.mjs
