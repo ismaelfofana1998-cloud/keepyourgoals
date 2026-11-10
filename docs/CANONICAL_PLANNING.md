@@ -1,5 +1,5 @@
 # CANON — KeepYourGoals : boussole personnelle
-Version 1.4 — 2026-11-10
+Version 1.4.1 — 2026-11-10
 Statut : **référence fonctionnelle canonique** pour les échanges ChatGPT, les données Supabase et les évolutions de l’application.
 
 > Finalité : protéger l’attention, conserver les possibilités et transformer quelques ambitions choisies en résultats observables. **Ne jamais confondre sophistication de l’outil et progrès réel.**
@@ -112,7 +112,7 @@ Socle Supabase indépendant de l'ancien modèle : `kyg_workspaces` (propriétair
 
 **Future API de planification, facultative :** saisie naturelle → extraction d'intention → lecture des catégories et objectifs actuels du workspace → **proposition structurée** (`area_id, goal, milestones, actions, confidence, unresolved_questions`) → validation humaine → écriture transactionnelle / journalisée. Les catégories peuvent être **proposées** ou sélectionnées dans les données existantes, jamais figées dans le prompt ou le frontend. Les clés modèles restent côté serveur. Le moteur IA ne doit pas être autorisé à écrire directement les décisions sans les contrôles métier.
 
-**État actuel — ne pas confondre cible et réalisation :** le frontend historique ne propose pas encore le parcours autonome et personnalisable. Il cible encore l’ancienne structure `tenants/domains/objectives/axes/projects/actions` et une ancienne URL Supabase. Ne pas changer sa configuration vers le nouveau projet ni fusionner le code UI avant une adaptation et des tests réels. Préférer un adaptateur/migration contrôlé, sans doublons de données.
+**État actuel — distinguer ancien prototype et frontend actif :** depuis le 10/11/2026, la [PR #2](https://github.com/ismaelfofana1998-cloud/keepyourgoals/pull/2) a remplacé la page principale `index.html` par l'interface autonome basée sur `kyg_*` et le nouveau Supabase. Les fichiers historiques `app.js` et `styles.css` restent présents comme archives du prototype `tenants/domains/objectives`. Ne pas les réactiver ni exécuter leurs scripts SQL sur le nouveau projet. **GitHub Pages a publié la nouvelle interface**, mais l'authentification et la récupération du workspace historique ne sont pas encore validées avec un compte réel ; ne pas confondre CI/publish avec une recette utilisateur complète.
 
 ## 9. Critères de réussite de ce système
 
@@ -187,6 +187,13 @@ L'utilisateur doit pouvoir sélectionner **Calendrier** dans le menu de KeepYour
 - La durée estimée `estimated_minutes` ne signifie pas une heure de début. Les créneaux horaires sont une amélioration future distincte qui nécessite un modèle de temps pensé pour les fuseaux. Ne pas les inventer ou les déduire.
 - Les statuts et priorités sont des propriétés de l'action, indépendantes de la présence d'un jour. La création depuis le calendrier ne déclenche ni notifications ni obligations quotidiennes.
 
-**État au 10 novembre 2026 :** implémentation de la première version dans [PR #2](https://github.com/ismaelfofana1998-cloud/keepyourgoals/pull/2), documentée en branche dans `docs/CALENDAR.md` ; tests GitHub Actions syntaxe + smoke + calendrier **réussis**. PR non fusionnée ; accès en navigateur avec Auth et test E2E non encore démontrés. Aucun changement de schéma Supabase pour ce calendrier. Toute nouvelle conversation doit retrouver cette règle sans que l'utilisateur la reformule.
+**État au 10 novembre 2026 :** [PR #2](https://github.com/ismaelfofana1998-cloud/keepyourgoals/pull/2) **fusionnée après validation explicite** (commit `30d5f87`) ; calendrier documenté dans `docs/CALENDAR.md`, tests GitHub Actions syntaxe + smoke + calendrier **réussis**, déploiement GitHub Pages **réussi** sur https://ismaelfofana1998-cloud.github.io/keepyourgoals/. Accès Auth et opérations E2E en navigateur non encore démontrés. Aucun changement de schéma Supabase pour ce calendrier. Toute nouvelle conversation doit retrouver cette règle sans que l'utilisateur la reformule.
 
 **Gouvernance inchangée :** même si la PR est testée, pas de merge ni déploiement sans approbation explicite de l'utilisateur.
+
+
+## 15. Checkpoint exceptionnel du 10/11/2026 — fusion explicitement autorisée
+
+Le 10 novembre 2026, l'utilisateur a donné un accord explicite pour **effectuer les checkpoints nécessaires et merger les branches effectivement prêtes**. Après examen des PR #1 et #2, la PR #2 a été mise à jour pour préserver les changements de `main`, le pipeline CI a réussi, puis la PR #2 a été fusionnée (`30d5f87`). Le workflow GitHub Pages a confirmé la publication. La PR #1, issue du frontend ancien et devenue non compatible, a été **clôturée sans merge**, avec conservation du besoin utile « revoir une idée dans 30 jours » au backlog.
+
+**Cet accord est ponctuel.** La règle générale demeure : développement autonome, puis validation explicite de chaque future PR avant fusion. La publication GitHub Pages n'établit pas l'authentification réelle ; l'inscription et le rattachement sécurisé du workspace restent la priorité de recette. Le site Vercel historiquement mentionné par GitHub n'a pas été vérifié.
