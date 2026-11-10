@@ -8,9 +8,10 @@ La branche `fix/auth-kyg-supabase-v2-20261104` remplace l'ancienne interface IKI
 
 - Connexion/création de compte Supabase Auth, redirection de confirmation d'e-mail.
 - Volets et sous-volets dynamiques, objectifs SMART, jalons flexibles, actions et coffre à idées.
+- **Calendrier semaine/mois**, accessible par le menu : tâches datées, ajout depuis un jour, modification, rattachement facultatif **volet (filtre) → objectif → jalon** ou tâche indépendante. Aucun changement de base de données requis. [Spécification et tests du calendrier](docs/CALENDAR.md).
 - Une seule prochaine action visible par défaut.
 - [Guide d'accès et de reprise des objectifs existants](docs/APP_ACCESS.md).
-- Tests statiques proposés : `node --check kyg-app.js`, `node tests/smoke.mjs`. Auth navigateur et liaison de compte à tester après mise en ligne approuvée.
+- Tests statiques proposés : `node --check kyg-app.js`, `node tests/smoke.mjs` et `node tests/calendar.mjs`. Auth navigateur et liaison de compte à tester après mise en ligne approuvée.
 - L'espace initial prérempli dans Supabase n'est rattaché à **aucun utilisateur Auth**. L'association aux objectifs préexistants doit se faire uniquement après vérification de l'identité du compte créé. Il ne faut jamais le faire réclamer automatiquement au premier inscrit.
 
 ## Reprendre dans n'importe quelle conversation — point d'entrée unique
