@@ -1,5 +1,5 @@
 # CANON — KeepYourGoals : boussole personnelle
-Version 1.3 — 2026-11-03
+Version 1.4 — 2026-11-10
 Statut : **référence fonctionnelle canonique** pour les échanges ChatGPT, les données Supabase et les évolutions de l’application.
 
 > Finalité : protéger l’attention, conserver les possibilités et transformer quelques ambitions choisies en résultats observables. **Ne jamais confondre sophistication de l’outil et progrès réel.**
@@ -166,3 +166,27 @@ L'utilisateur délègue **entièrement l'initiative et le travail de développem
 **Handoff :** après une nouvelle décision durable, mettre à jour l'objet Supabase correspondant ; le prochain chat retrouve ces données via `START_HERE.md`. Préférer des notes structurées et sobres dans `kyg_context_notes`, jamais une transcription complète. Un changement de vision du produit entraîne une mise à jour explicite des documents canoniques et, si besoin, du checkpoint.
 
 **Développement :** le rôle développeur hebdomadaire lit également ce protocole de reprise, mais continue à travailler en branches et PR sans aucun merge automatique. **Le mécanisme de reprise ne change ni les droits ni les règles d'approbation.**
+
+
+## 14. Calendrier autonome et tâches hiérarchisées (décision du 10/11/2026)
+
+L'utilisateur doit pouvoir sélectionner **Calendrier** dans le menu de KeepYourGoals et voir les tâches datées. L'application propose un parcours **Semaine / Mois**, une sélection de jour et la création/modification d'une tâche directement depuis le jour choisi. Cette fonctionnalité doit être disponible sans ChatGPT et sans API d'IA.
+
+**Principe de source de vérité unique :** le calendrier ne possède pas sa propre table de tâches. Il lit et modifie exactement les mêmes `kyg_actions` que les vues « Maintenant » et « Mon chemin », dans l'espace `workspace_id` autorisé.
+
+**Cascade personnalisable et facultative :**
+- Le **volet** (`kyg_areas`) sert à filtrer les objectifs disponibles, y compris dans ses sous-volets.
+- L'utilisateur peut choisir un **objectif parent** (`kyg_goals.goal_id` dans la tâche), puis éventuellement un **jalon appartenant à cet objectif** (`kyg_actions.milestone_id`).
+- Aucun lien n'est requis : une tâche peut être **indépendante** (`goal_id = null`, `milestone_id = null`). Choisir un volet uniquement pour filtrer ne signifie pas que l'action indépendante a été rattachée à ce volet : `kyg_actions` ne stocke pas aujourd'hui de `area_id`.
+- Le changement d'objectif réinitialise le jalon, et toute écriture est validée sur les identifiants appartenant au workspace courant. Les noms et catégories ne sont jamais codés en dur.
+
+**Sémantique temporelle actuelle :**
+- `planned_for` est **le jour prévu pour travailler sur la tâche**, `due_date` est son **échéance**.
+- Si `planned_for` existe, placer la tâche sur ce jour ; sinon, si `due_date` existe, l'afficher sur la date d'échéance. Ne pas dupliquer la tâche sur les deux dates.
+- Une tâche sans aucune date reste consultable dans « Sans date » ; elle ne disparaît pas.
+- La durée estimée `estimated_minutes` ne signifie pas une heure de début. Les créneaux horaires sont une amélioration future distincte qui nécessite un modèle de temps pensé pour les fuseaux. Ne pas les inventer ou les déduire.
+- Les statuts et priorités sont des propriétés de l'action, indépendantes de la présence d'un jour. La création depuis le calendrier ne déclenche ni notifications ni obligations quotidiennes.
+
+**État au 10 novembre 2026 :** implémentation de la première version dans [PR #2](https://github.com/ismaelfofana1998-cloud/keepyourgoals/pull/2), documentée en branche dans `docs/CALENDAR.md` ; tests GitHub Actions syntaxe + smoke + calendrier **réussis**. PR non fusionnée ; accès en navigateur avec Auth et test E2E non encore démontrés. Aucun changement de schéma Supabase pour ce calendrier. Toute nouvelle conversation doit retrouver cette règle sans que l'utilisateur la reformule.
+
+**Gouvernance inchangée :** même si la PR est testée, pas de merge ni déploiement sans approbation explicite de l'utilisateur.
